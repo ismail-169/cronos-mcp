@@ -5,11 +5,11 @@
 <h1 align="center">CronosMCP</h1>
 
 <p align="center">
-  <strong>AI-Native Payment Infrastructure for Cronos</strong>
+  <strong>x402 Payment Infrastructure for Cronos</strong>
 </p>
 
 <p align="center">
-  Enable AI agents to autonomously pay for premium tools using x402 micropayments.
+  Enable  agents to autonomously pay for premium tools using x402 micropayments.
 </p>
 
 <p align="center">
