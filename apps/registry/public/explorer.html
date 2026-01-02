@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>x402 Explorer | CronosMCP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fafafa;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3 { font-family: 'Newsreader', serif; }
+
+    /* Header */
+    header {
+      background: #fff;
+      border-bottom: 2px solid #1a1a1a;
+      padding: 16px 48px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo img { height: 40px; }
+
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a {
+      text-decoration: none;
+      color: #666;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: #1a1a1a; }
+    nav a.active { color: #1a1a1a; font-weight: 600; }
+
+    .btn {
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 2px solid #1a1a1a;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #22d3ee;
+      color: #0a0f1a;
+      box-shadow: 4px 4px 0 #1a1a1a;
+    }
+    .btn-primary:hover {
+      box-shadow: 6px 6px 0 #1a1a1a;
+      transform: translate(-2px, -2px);
+    }
+
+    /* Main */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px;
+    }
+
+    /* Page Title */
+    .page-header { margin-bottom: 40px; }
+
+    .page-header h1 {
+      font-size: 42px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .page-header p { color: #666; font-size: 16px; }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 2px solid #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 4px 4px 0 #22d3ee;
+      transition: all 0.15s ease;
+    }
+
+    .stat-card:nth-child(2) { box-shadow: 4px 4px 0 #8B5CF6; }
+    .stat-card:nth-child(3) { box-shadow: 4px 4px 0 #f59e0b; }
+    .stat-card:nth-child(4) { box-shadow: 4px 4px 0 #22c55e; }
+
+    .stat-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #22d3ee; }
+    .stat-card:nth-child(2):hover { box-shadow: 6px 6px 0 #8B5CF6; }
+    .stat-card:nth-child(3):hover { box-shadow: 6px 6px 0 #f59e0b; }
+    .stat-card:nth-child(4):hover { box-shadow: 6px 6px 0 #22c55e; }
+
+    .stat-value {
+      font-family: 'Newsreader', serif;
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Search */
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .search-input {
+      flex: 1;
+      background: #fff;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      padding: 14px 20px 14px 48px;
+      font-size: 15px;
+      box-shadow: 4px 4px 0 #e5e5e5;
+      transition: all 0.15s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 6px 6px 0 #22d3ee;
+      transform: translate(-2px, -2px);
+    }
+
+    .search-wrapper { flex: 1; position: relative; }
+
+    .search-wrapper svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: #666;
+    }
+
+    .filter-select {
+      background: #fff;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 15px;
+      box-shadow: 4px 4px 0 #e5e5e5;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      box-shadow: 6px 6px 0 #8B5CF6;
+    }
+
+    /* Results */
+    #results { display: flex; flex-direction: column; gap: 16px; }
+
+    /* Project Card */
+    .project-card {
+      background: #fff;
+      border: 2px solid #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 6px 6px 0 #8B5CF6;
+      transition: all 0.15s ease;
+    }
+
+    .project-card:hover {
+      box-shadow: 10px 10px 0 #8B5CF6;
+      transform: translate(-4px, -4px);
+    }
+
+    .project-header {
+      padding: 20px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s;
+    }
+
+    .project-header:hover { background: #f5f5f5; }
+
+    .project-info { display: flex; align-items: center; gap: 16px; }
+
+    .project-icon {
+      width: 48px;
+      height: 48px;
+      background: #22d3ee;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      box-shadow: 3px 3px 0 #1a1a1a;
+    }
+
+    .project-name { font-size: 18px; font-weight: 600; }
+    .project-servers { font-size: 13px; color: #666; }
+
+    .project-meta { display: flex; align-items: center; gap: 16px; }
+    .project-tools { font-size: 14px; font-weight: 500; }
+    .project-tools-sub { font-size: 12px; color: #666; }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 2px solid;
+    }
+
+    .badge-testnet { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+    .badge-mainnet { background: #d1fae5; color: #065f46; border-color: #22c55e; }
+
+    .chevron {
+      width: 24px;
+      height: 24px;
+      color: #666;
+      transition: transform 0.3s ease;
+    }
+
+    .chevron.open { transform: rotate(180deg); }
+
+    /* Expand Panel */
+    .expand-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      border-top: 2px solid #1a1a1a;
+    }
+
+    .expand-panel.open { max-height: 2000px; }
+
+    .servers-container { padding: 16px; background: #f5f5f5; }
+
+    /* Server Card */
+    .server-card {
+      background: #fff;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 4px 4px 0 #22d3ee;
+    }
+
+    .server-card:last-child { margin-bottom: 0; }
+
+    .server-header {
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s;
+    }
+
+    .server-header:hover { background: #f9f9f9; }
+    .server-info { display: flex; align-items: center; gap: 12px; }
+
+    .server-icon {
+      width: 36px;
+      height: 36px;
+      background: #f5f5f5;
+      border: 2px solid #1a1a1a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .server-name { font-size: 15px; font-weight: 600; }
+    .server-endpoint { font-size: 12px; color: #666; font-family: monospace; }
+    .server-tools { font-size: 13px; color: #666; }
+
+    /* Tools Panel */
+    .tools-container {
+      padding: 12px 16px;
+      background: #fafafa;
+      border-top: 2px solid #e5e5e5;
+    }
+
+    .tool-item {
+      background: #fff;
+      border: 2px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tool-item:last-child { margin-bottom: 0; }
+    .tool-name { font-size: 14px; font-weight: 600; }
+    .tool-desc { font-size: 12px; color: #666; }
+
+    .tool-price {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tool-price.free { background: #d1fae5; color: #065f46; }
+    .tool-price.paid { background: #fef3c7; color: #92400e; }
+
+    /* Loading & Empty States */
+    .loading, .empty-state { text-align: center; padding: 80px 20px; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e5e5e5;
+      border-top-color: #22d3ee;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      background: #f5f5f5;
+      border: 2px solid #e5e5e5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .empty-state h3 { font-size: 20px; margin-bottom: 8px; }
+    .empty-state p { color: #666; margin-bottom: 24px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header { padding: 14px 20px; }
+      header nav a:not(.btn) { display: none; }
+      main { padding: 24px 20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .search-bar { flex-direction: column; }
+      .project-meta { flex-direction: column; align-items: flex-end; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <img src="cronos_mcp.webp" alt="CronosMCP">
+      </div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/explorer" class="active">Explorer</a>
+        <a href="https://docs.cronosmcp.com">Docs</a>
+        <a href="/register" class="btn btn-primary">Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <h1>x402 Explorer</h1>
+      <p>Discover x402 enabled tools and services on Cronos</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="statProjects">-</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statServers">-</div>
+        <div class="stat-label">Servers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statTools">-</div>
+        <div class="stat-label">Tools</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statTestnet">-</div>
+        <div class="stat-label">Testnet</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <div class="search-wrapper">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search projects, servers or tools..." onkeyup="handleSearch(event)">
+      </div>
+      <select id="networkFilter" class="filter-select" onchange="loadProjects()">
+        <option value="">All Networks</option>
+        <option value="cronos-testnet">Testnet</option>
+        <option value="cronos-mainnet">Mainnet</option>
+      </select>
+    </div>
+
+    <div id="results">
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p style="color: #666;">Loading registry...</p>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <div class="empty-icon">
+        <svg width="32" height="32" fill="none" stroke="#999" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+        </svg>
+      </div>
+      <h3>No projects found</h3>
+      <p>Be the first to register a server!</p>
+      <a href="/register" class="btn btn-primary">Register Your Server</a>
+    </div>
+  </main>
+
+  <script>
+    const REGISTRY_URL = 'http://localhost:3010';
+    let searchTimeout = null;
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`${REGISTRY_URL}/stats`);
+        const stats = await res.json();
+        document.getElementById('statProjects').textContent = stats.totalProjects || 0;
+        document.getElementById('statServers').textContent = stats.totalServers;
+        document.getElementById('statTools').textContent = stats.totalTools;
+        document.getElementById('statTestnet').textContent = stats.networks.testnet;
+      } catch (e) { console.error('Failed to load stats:', e); }
+    }
+
+    async function loadProjects() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const network = document.getElementById('networkFilter').value;
+
+      try {
+        const params = new URLSearchParams();
+        if (network) params.set('network', network);
+        
+        const res = await fetch(`${REGISTRY_URL}/projects?${params.toString()}`);
+        const data = await res.json();
+
+        document.getElementById('loading').style.display = 'none';
+        let projects = data.projects || [];
+        
+        if (query) {
+          projects = projects.filter(p => 
+            p.name.toLowerCase().includes(query) ||
+            p.servers.some(s => s.name.toLowerCase().includes(query) || s.tools.some(t => t.name.toLowerCase().includes(query) || t.description?.toLowerCase().includes(query)))
+          );
+        }
+
+        if (projects.length === 0) {
+          document.getElementById('emptyState').style.display = 'block';
+          document.getElementById('results').innerHTML = '';
+          return;
+        }
+
+        document.getElementById('emptyState').style.display = 'none';
+        
+        document.getElementById('results').innerHTML = projects.map((project, pIndex) => {
+          const totalPaid = project.servers.reduce((sum, s) => sum + s.paidTools, 0);
+          const totalFree = project.servers.reduce((sum, s) => sum + s.freeTools, 0);
+          
+          return `
+            <div class="project-card">
+              <div class="project-header" onclick="toggleProject(${pIndex})">
+                <div class="project-info">
+                  <div class="project-icon">${project.name.charAt(0).toUpperCase()}</div>
+                  <div>
+                    <div class="project-name">${project.name}</div>
+                    <div class="project-servers">${project.servers.length} server${project.servers.length > 1 ? 's' : ''}</div>
+                  </div>
+                </div>
+                <div class="project-meta">
+                  <div style="text-align: right;">
+                    <div class="project-tools">${project.totalTools} tools</div>
+                    <div class="project-tools-sub">${totalPaid} paid · ${totalFree} free</div>
+                  </div>
+                  <span class="badge ${project.network === 'cronos-mainnet' ? 'badge-mainnet' : 'badge-testnet'}">${project.network === 'cronos-mainnet' ? 'Mainnet' : 'Testnet'}</span>
+                  <svg class="chevron" id="chevron-p${pIndex}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+              <div class="expand-panel" id="project-${pIndex}">
+                <div class="servers-container">
+                  ${project.servers.map((server, sIndex) => `
+                    <div class="server-card">
+                      <div class="server-header" onclick="event.stopPropagation(); toggleServer(${pIndex}, ${sIndex})">
+                        <div class="server-info">
+                          <div class="server-icon"><svg width="16" height="16" fill="none" stroke="#666" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg></div>
+                          <div><div class="server-name">${server.name}</div><div class="server-endpoint">${server.endpoint}</div></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                          <span class="server-tools">${server.toolCount} tools</span>
+                          <svg class="chevron" id="chevron-s${pIndex}-${sIndex}" style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                      </div>
+                      <div class="expand-panel" id="server-${pIndex}-${sIndex}" style="border-top-color: #e5e5e5;">
+                        <div class="tools-container">
+                          ${server.tools.map(tool => {
+                            const price = BigInt(tool.price);
+                            const priceStr = price === BigInt(0) ? 'FREE' : '$' + (Number(price) / 1_000_000).toFixed(6);
+                            const priceClass = price === BigInt(0) ? 'free' : 'paid';
+                            return `<div class="tool-item"><div><div class="tool-name">${tool.name}</div><div class="tool-desc">${tool.description || 'No description'}</div></div><span class="tool-price ${priceClass}">${priceStr}</span></div>`;
+                          }).join('')}
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (e) {
+        console.error('Failed to load projects:', e);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results').innerHTML = `<div class="empty-state"><p style="color: #dc2626;">Failed to connect to registry</p><p style="color: #666; font-size: 14px;">Make sure the registry server is running at ${REGISTRY_URL}</p></div>`;
+      }
+    }
+
+    function toggleProject(pIndex) {
+      document.getElementById(`project-${pIndex}`).classList.toggle('open');
+      document.getElementById(`chevron-p${pIndex}`).classList.toggle('open');
+    }
+
+    function toggleServer(pIndex, sIndex) {
+      document.getElementById(`server-${pIndex}-${sIndex}`).classList.toggle('open');
+      document.getElementById(`chevron-s${pIndex}-${sIndex}`).classList.toggle('open');
+    }
+
+    function handleSearch(event) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(loadProjects, 300);
+    }
+
+    loadStats();
+    loadProjects();
+  </script>
+</body>
+</html>

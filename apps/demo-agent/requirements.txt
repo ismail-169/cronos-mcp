@@ -1,0 +1,14 @@
+# CronosMCP Demo Agent Dependencies
+
+# Web3
+web3>=6.11.0
+eth-account>=0.10.0
+
+# HTTP
+httpx>=0.25.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# Utilities
+pydantic>=2.5.0

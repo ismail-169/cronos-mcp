@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:wght@400;500;600;700&display=swap');
+
+:root {
+  --cyan: #22d3ee;
+  --purple: #8B5CF6;
+  --amber: #f59e0b;
+  --green: #22c55e;
+  --dark: #1a1a1a;
+  --light: #fafafa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--light);
+  color: var(--dark);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Newsreader', serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e5e5e5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Neo-brutalism utilities */
+@layer utilities {
+  .neo-shadow-cyan {
+    box-shadow: 4px 4px 0 var(--cyan);
+  }
+  
+  .neo-shadow-purple {
+    box-shadow: 4px 4px 0 var(--purple);
+  }
+  
+  .neo-shadow-amber {
+    box-shadow: 4px 4px 0 var(--amber);
+  }
+  
+  .neo-shadow-green {
+    box-shadow: 4px 4px 0 var(--green);
+  }
+  
+  .neo-shadow-dark {
+    box-shadow: 4px 4px 0 var(--dark);
+  }
+  
+  .neo-shadow-light {
+    box-shadow: 4px 4px 0 #e5e5e5;
+  }
+  
+  .neo-border {
+    border: 2px solid var(--dark);
+  }
+  
+  .neo-hover:hover {
+    transform: translate(-2px, -2px);
+  }
+  
+  .neo-hover:hover.neo-shadow-cyan {
+    box-shadow: 6px 6px 0 var(--cyan);
+  }
+  
+  .neo-hover:hover.neo-shadow-purple {
+    box-shadow: 6px 6px 0 var(--purple);
+  }
+  
+  .neo-hover:hover.neo-shadow-amber {
+    box-shadow: 6px 6px 0 var(--amber);
+  }
+  
+  .neo-hover:hover.neo-shadow-green {
+    box-shadow: 6px 6px 0 var(--green);
+  }
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(34, 211, 238, 0);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

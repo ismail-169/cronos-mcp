@@ -1,0 +1,33 @@
+{
+  "name": "@cronos-mcp/onchain-analytics-server",
+  "version": "0.1.0",
+  "description": "MCP server for Cronos onchain analytics with x402 payments",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cronos",
+    "x402",
+    "mcp",
+    "onchain",
+    "analytics"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@cronos-mcp/core": "*",
+    "@cronos-mcp/server-sdk": "*",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.9.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  }
+}

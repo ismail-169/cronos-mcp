@@ -1,0 +1,26 @@
+{
+  "name": "@cronos-mcp/registry",
+  "version": "1.0.0",
+  "description": "CronosMCP Registry - Discovery layer for x402 AI tools on Cronos",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "cronos",
+    "mcp",
+    "x402",
+    "registry",
+    "ai-tools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

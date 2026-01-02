@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CronosMCP | The SDK for Building x402 Tools on Cronos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fafafa;
+      color: #1a1a1a;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Newsreader', serif;
+    }
+
+    /* Striped border decoration */
+    .stripe-border {
+      height: 8px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #22d3ee,
+        #22d3ee 2px,
+        #8B5CF6 2px,
+        #8B5CF6 4px,
+        #f59e0b 4px,
+        #f59e0b 6px,
+        #22c55e 6px,
+        #22c55e 8px
+      );
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .logo img {
+      height: 44px;
+      width: auto;
+    }
+
+    nav {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #666;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: #1a1a1a;
+    }
+
+    .btn-primary {
+      background: #22d3ee;
+      color: #0a0f1a;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 2px solid #0a0f1a;
+      border-radius: 8px;
+      box-shadow: 4px 4px 0 #0a0f1a;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 6px 6px 0 #0a0f1a;
+      transform: translate(-2px, -2px);
+    }
+
+    .btn-primary:active {
+      box-shadow: 2px 2px 0 #0a0f1a;
+      transform: translate(1px, 1px);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: #1a1a1a;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 2px solid #1a1a1a;
+      border-radius: 8px;
+      box-shadow: 4px 4px 0 #1a1a1a;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline:hover {
+      box-shadow: 6px 6px 0 #1a1a1a;
+      transform: translate(-2px, -2px);
+    }
+
+    .btn-outline:active {
+      box-shadow: 2px 2px 0 #1a1a1a;
+      transform: translate(1px, 1px);
+    }
+
+    .btn-outline:hover {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 160px 48px 80px;
+      text-align: center;
+      background: #fff;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+      margin-bottom: 24px;
+      background: #fff;
+      padding: 10px 20px;
+      border: 2px solid #1a1a1a;
+      border-radius: 50px;
+      box-shadow: 3px 3px 0 #22d3ee;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: #22d3ee;
+      border-radius: 50%;
+    }
+
+    .hero-badge a {
+      color: #22d3ee;
+      text-decoration: none;
+    }
+
+    .hero-badge a:hover {
+      text-decoration: underline;
+    }
+
+    .hero h1 {
+      font-size: 64px;
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero p {
+      font-size: 18px;
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      color: #666;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    /* Demo Section */
+    .demo-wrapper {
+      padding: 0 48px;
+    }
+
+    .demo-section {
+      background: linear-gradient(180deg, #0a0f1a 0%, #111827 100%);
+      padding: 80px 48px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .demo-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at 30% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+      animation: demoGlow 8s ease-in-out infinite;
+    }
+
+    @keyframes demoGlow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .demo-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+
+    .demo-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #22d3ee;
+      border-radius: 50%;
+      animation: particleFloat 10s infinite;
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-200px) translateX(50px); opacity: 0; }
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .demo-window {
+      background: #0d1117;
+      border-radius: 12px;
+      border: 3px solid rgba(255,255,255,0.2);
+      box-shadow: 6px 6px 0 rgba(34, 211, 238, 0.5);
+      overflow: hidden;
+      transition: all 0.15s ease;
+    }
+
+    .demo-window:hover {
+      box-shadow: 10px 10px 0 rgba(34, 211, 238, 0.5);
+      transform: translate(-4px, -4px);
+    }
+
+    .demo-window:last-child {
+      box-shadow: 6px 6px 0 rgba(139, 92, 246, 0.5);
+    }
+
+    .demo-window:last-child:hover {
+      box-shadow: 10px 10px 0 rgba(139, 92, 246, 0.5);
+    }
+
+    .demo-window-header {
+      background: #161b22;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .demo-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .demo-dot.red { background: #ff5f56; }
+    .demo-dot.yellow { background: #ffbd2e; }
+    .demo-dot.green { background: #27ca40; }
+
+    .demo-content {
+      padding: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #e2e8f0;
+      min-height: 200px;
+    }
+
+    .demo-content .purple { color: #C792EA; }
+    .demo-content .green { color: #C3E88D; }
+    .demo-content .yellow { color: #FFCB6B; }
+    .demo-content .cyan { color: #22d3ee; }
+    .demo-content .comment { color: #546E7A; }
+
+    .demo-flow {
+      padding: 24px;
+      min-height: 200px;
+    }
+
+    .flow-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateX(-10px);
+      animation: flowIn 0.5s ease forwards;
+    }
+
+    .flow-item:nth-child(1) { animation-delay: 0.5s; }
+    .flow-item:nth-child(2) { animation-delay: 1.5s; }
+    .flow-item:nth-child(3) { animation-delay: 2.5s; }
+    .flow-item:nth-child(4) { animation-delay: 3.5s; }
+
+    @keyframes flowIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .flow-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .flow-icon.request { background: #8B5CF6; }
+    .flow-icon.payment { background: #f59e0b; }
+    .flow-icon.verify { background: #22d3ee; }
+    .flow-icon.success { background: #22c55e; }
+
+    .flow-text {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    .flow-text strong {
+      color: #fff;
+    }
+
+    /* Sections */
+    section {
+      padding: 100px 48px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      background: #fff;
+      padding: 8px 16px;
+      border: 2px solid #1a1a1a;
+      border-radius: 50px;
+      box-shadow: 3px 3px 0 #8B5CF6;
+    }
+
+    .section-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 50%;
+    }
+
+    .section-title {
+      font-size: 42px;
+      font-weight: 400;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-size: 17px;
+      color: #666;
+      margin-bottom: 60px;
+      max-width: 500px;
+    }
+
+    /* Pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+    }
+
+    .pillar {
+      padding: 40px 0;
+    }
+
+    .pillar-icon {
+      width: 56px;
+      height: 56px;
+      background: #22d3ee;
+      border: 2px solid #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .pillar-icon img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .pillar-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: #1a1a1a;
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .pillar h3 {
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .pillar p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .pillar-link {
+      color: #22d3ee;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s ease;
+    }
+
+    .pillar-link:hover {
+      gap: 10px;
+    }
+
+    /* Features Bento */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      background: transparent;
+    }
+
+    .bento-item {
+      background: #fff;
+      padding: 32px;
+      border: 2px solid #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 6px 6px 0 #22d3ee;
+      transition: all 0.15s ease;
+    }
+
+    .bento-item:nth-child(2) {
+      box-shadow: 6px 6px 0 #8B5CF6;
+    }
+
+    .bento-item:nth-child(3) {
+      box-shadow: 6px 6px 0 #f59e0b;
+    }
+
+    .bento-item:hover {
+      box-shadow: 10px 10px 0 #22d3ee;
+      transform: translate(-4px, -4px);
+    }
+
+    .bento-item:nth-child(2):hover {
+      box-shadow: 10px 10px 0 #8B5CF6;
+    }
+
+    .bento-item:nth-child(3):hover {
+      box-shadow: 10px 10px 0 #f59e0b;
+    }
+
+    .bento-icon {
+      width: 48px;
+      height: 48px;
+      background: #f5f5f5;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .bento-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .bento-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: #1a1a1a;
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .bento-item h3 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .bento-item p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Explorer Section */
+    .explorer-section {
+      background: #fff;
+      padding: 100px 48px;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .explorer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .explorer-content {
+      max-width: 700px;
+    }
+
+    .explorer-features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .explorer-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      color: #666;
+    }
+
+    .explorer-features li svg {
+      width: 20px;
+      height: 20px;
+      stroke: #22d3ee;
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
+    /* Code Section */
+    .code-section {
+      background: #fff;
+      border-top: 1px solid #e5e5e5;
+      padding: 100px 48px;
+    }
+
+    .code-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .code-steps {
+      list-style: none;
+    }
+
+    .code-step {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease;
+    }
+
+    .code-step.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: #22d3ee;
+      border: 2px solid #1a1a1a;
+      border-radius: 8px;
+      box-shadow: 3px 3px 0 #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .code-window {
+      background: #0d1117;
+      overflow: hidden;
+      border: 3px solid #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 8px 8px 0 #8B5CF6;
+      transition: all 0.15s ease;
+    }
+
+    .code-window:hover {
+      box-shadow: 12px 12px 0 #8B5CF6;
+      transform: translate(-4px, -4px);
+    }
+
+    .code-header {
+      background: #161b22;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .code-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red { background: #ff5f56; }
+    .code-dot.yellow { background: #ffbd2e; }
+    .code-dot.green { background: #27ca40; }
+
+    .code-title {
+      margin-left: 8px;
+      color: #8b949e;
+      font-size: 12px;
+    }
+
+    .code-content {
+      padding: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      min-height: 340px;
+    }
+
+    .code-line {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.25s ease;
+      white-space: pre;
+    }
+
+    .code-line.typed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-content .purple { color: #C792EA; }
+    .code-content .green { color: #C3E88D; }
+    .code-content .yellow { color: #FFCB6B; }
+    .code-content .white { color: #e2e8f0; }
+    .code-content .comment { color: #546E7A; }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: #22d3ee;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* CTA */
+    .cta {
+      text-align: center;
+      padding: 100px 48px;
+      background: #0a0f1a;
+      color: #fff;
+    }
+
+    .cta .section-badge {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+      box-shadow: 3px 3px 0 #22d3ee;
+    }
+
+    .cta .btn-primary {
+      background: #22d3ee;
+      border-color: #fff;
+      box-shadow: 4px 4px 0 #fff;
+    }
+
+    .cta .btn-primary:hover {
+      box-shadow: 6px 6px 0 #fff;
+    }
+
+    .cta .btn-outline {
+      color: #fff;
+      background: transparent;
+      border-color: #fff;
+      box-shadow: 4px 4px 0 #22d3ee;
+    }
+
+    .cta .btn-outline:hover {
+      background: #fff;
+      color: #0a0f1a;
+      box-shadow: 6px 6px 0 #22d3ee;
+    }
+
+    .cta h2 {
+      font-size: 42px;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .cta p {
+      font-size: 17px;
+      color: #94a3b8;
+      margin-bottom: 36px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* Footer */
+    footer {
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    footer nav {
+      gap: 28px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero h1 { font-size: 48px; }
+      .demo-grid { grid-template-columns: 1fr; }
+      .bento-grid { grid-template-columns: 1fr; }
+      .code-grid { grid-template-columns: 1fr; }
+      .pillars-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 14px 20px; }
+      header nav { gap: 12px; }
+      header nav a:not(.btn-primary) { display: none; }
+      .hero { padding: 100px 20px 60px; }
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 16px; }
+      .hero-badge { font-size: 10px; padding: 8px 14px; }
+      section { padding: 60px 20px; }
+      .section-title { font-size: 32px; }
+      .section-subtitle { font-size: 15px; }
+      .hero-buttons { flex-direction: column; align-items: center; width: 100%; }
+      .hero-buttons .btn-primary,
+      .hero-buttons .btn-outline { width: 100%; text-align: center; }
+      .hero > .btn-outline { width: calc(100% - 40px); text-align: center; }
+      .demo-wrapper { padding: 0 20px; }
+      .demo-section { padding: 40px 20px; border-radius: 16px; }
+      .demo-content { padding: 16px; font-size: 12px; min-height: 160px; }
+      .demo-flow { padding: 16px; min-height: 160px; }
+      .flow-text { font-size: 13px; }
+      .explorer-section { padding: 60px 20px; }
+      .explorer-features li { font-size: 14px; }
+      .code-section { padding: 60px 20px; }
+      .code-content { padding: 16px; font-size: 11px; min-height: 280px; }
+      .bento-item { padding: 24px; }
+      .pillar { padding: 24px 0; }
+      .pillar h3 { font-size: 24px; }
+      .cta { padding: 60px 20px; }
+      .cta h2 { font-size: 28px; }
+      .cta-buttons { flex-direction: column; align-items: center; }
+      .cta-buttons .btn-primary,
+      .cta-buttons .btn-outline { width: 100%; max-width: 280px; text-align: center; }
+      footer { padding: 24px 20px; flex-direction: column; gap: 16px; }
+      footer nav { gap: 20px; }
+      .stripe-border { height: 8px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 28px; }
+      .section-title { font-size: 26px; }
+      .pillar-icon { width: 48px; height: 48px; }
+      .pillar-icon img, .pillar-icon svg { width: 24px; height: 24px; }
+      .bento-icon { width: 40px; height: 40px; }
+      .bento-icon img, .bento-icon svg { width: 20px; height: 20px; }
+      .bento-item h3 { font-size: 18px; }
+      .bento-item p { font-size: 13px; }
+    }
+
+    /* Transfer Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 15, 26, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .transfer-modal {
+      background: #fff;
+      border: 3px solid #1a1a1a;
+      border-radius: 16px;
+      box-shadow: 8px 8px 0 #1a1a1a;
+      width: 100%;
+      max-width: 420px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      background: #0a0f1a;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 13px 13px 0 0;
+    }
+
+    .modal-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #8B5CF6, #22d3ee);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .modal-title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .modal-subtitle {
+      color: #22d3ee;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .gasless-badge {
+      margin-left: auto;
+      background: #22c55e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 2px solid #1a1a1a;
+    }
+
+    .modal-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .modal-close:hover {
+      opacity: 1;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .network-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .network-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #1a1a1a;
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .network-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .network-btn.active {
+      background: #22d3ee;
+      box-shadow: 3px 3px 0 #1a1a1a;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      background: #fff;
+      transition: all 0.15s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      box-shadow: 4px 4px 0 #22d3ee;
+    }
+
+    .input-field.address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .amount-input-wrapper {
+      position: relative;
+    }
+
+    .amount-input-wrapper .input-field {
+      padding-right: 80px;
+    }
+
+    .amount-suffix {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .quick-amounts {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-amount {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid #e5e5e5;
+      border-radius: 6px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quick-amount:hover {
+      border-color: #8B5CF6;
+      background: #f5f0ff;
+    }
+
+    .wallet-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #f5f5f5;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .wallet-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #8B5CF6, #22d3ee);
+      border-radius: 50%;
+      border: 2px solid #1a1a1a;
+    }
+
+    .wallet-info {
+      flex: 1;
+    }
+
+    .wallet-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .wallet-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .wallet-balance {
+      text-align: right;
+    }
+
+    .balance-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .balance-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #22c55e;
+    }
+
+    .disconnect-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .connect-wallet-btn, .send-btn {
+      width: 100%;
+      padding: 16px;
+      border: 3px solid #1a1a1a;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .connect-wallet-btn {
+      background: #8B5CF6;
+      color: #fff;
+      box-shadow: 5px 5px 0 #1a1a1a;
+    }
+
+    .connect-wallet-btn:hover {
+      box-shadow: 7px 7px 0 #1a1a1a;
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn {
+      background: #22c55e;
+      color: #fff;
+      box-shadow: 5px 5px 0 #1a1a1a;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      box-shadow: 7px 7px 0 #1a1a1a;
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: 3px 3px 0 #999;
+    }
+
+    .info-box {
+      background: #f0f9ff;
+      border: 2px solid #22d3ee;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .info-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0a0f1a;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .tx-status {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 10px;
+      border: 2px solid;
+    }
+
+    .tx-status.pending {
+      background: #fffbeb;
+      border-color: #f59e0b;
+    }
+
+    .tx-status.success {
+      background: #f0fdf4;
+      border-color: #22c55e;
+    }
+
+    .tx-status.error {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+
+    .tx-status-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tx-hash {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    .tx-hash a {
+      color: #8B5CF6;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e5e5e5;
+      border-top-color: #f59e0b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .modal-footer {
+      text-align: center;
+      padding: 16px;
+      border-top: 2px solid #e5e5e5;
+      background: #fafafa;
+      border-radius: 0 0 13px 13px;
+    }
+
+    .modal-footer-text {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .modal-footer-text a {
+      color: #8B5CF6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Gasless Transfer Button */
+    .btn-gasless {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 2px solid #0a0f1a;
+      border-radius: 8px;
+      box-shadow: 4px 4px 0 #0a0f1a;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-gasless:hover {
+      box-shadow: 6px 6px 0 #0a0f1a;
+      transform: translate(-2px, -2px);
+    }
+
+    .btn-gasless:active {
+      box-shadow: 2px 2px 0 #0a0f1a;
+      transform: translate(1px, 1px);
+    }
+  </style>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="cronos_mcp.webp" alt="CronosMCP">
+    </div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/explorer">Explorer</a>
+      <a href="https://docs.cronosmcp.com">Docs</a>
+      <a href="https://github.com" target="_blank">GitHub</a>
+      <button class="btn-gasless" onclick="openTransferModal()" style="padding: 10px 16px; font-size: 13px;">
+        ⛽ Gasless Transfer
+      </button>
+      <a href="/register" class="btn-primary">Register</a>
+    </nav>
+  </header>
+
+  <div class="stripe-border"></div>
+
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      <span>x402 Protocol on Cronos</span>
+    </div>
+    <h1>The SDK for building x402 tools on Cronos</h1>
+    <p>
+      Add x402 payments to any API or service in minutes. Offer free or paid tools. No blockchain code, no payment logic, no protocol complexity.
+    </p>
+    <div class="hero-buttons">
+      <a href="https://docs.cronosmcp.com" class="btn-primary">Get the SDK</a>
+      <a href="/explorer" class="btn-outline">Explore Tools</a>
+      <button class="btn-gasless" onclick="openTransferModal()">
+        ⛽ Gasless Transfer
+      </button>
+    </div>
+    <a href="/explorer" class="btn-outline">x402 Tools on Cronos</a>
+  </section>
+
+  <div class="demo-wrapper">
+  <div class="demo-section">
+    <div class="demo-particles">
+      <div class="demo-particle" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+      <div class="demo-particle" style="left: 25%; top: 60%; animation-delay: 2s;"></div>
+      <div class="demo-particle" style="left: 40%; top: 30%; animation-delay: 4s;"></div>
+      <div class="demo-particle" style="left: 55%; top: 70%; animation-delay: 1s;"></div>
+      <div class="demo-particle" style="left: 70%; top: 40%; animation-delay: 3s;"></div>
+      <div class="demo-particle" style="left: 85%; top: 50%; animation-delay: 5s;"></div>
+    </div>
+    <div class="demo-grid">
+      <div class="demo-window">
+        <div class="demo-window-header">
+          <span class="demo-dot red"></span>
+          <span class="demo-dot yellow"></span>
+          <span class="demo-dot green"></span>
+        </div>
+        <div class="demo-content">
+          <div><span class="cyan">$</span> npm install @cronos-mcp/server-sdk</div>
+          <div style="margin-top: 12px;"><span class="green">✓</span> Installing dependencies...</div>
+          <div><span class="green">✓</span> Package installed successfully</div>
+          <div style="margin-top: 12px;"><span class="cyan">$</span> npm run start</div>
+          <div><span class="yellow">→</span> Server running</div>
+          <div><span class="yellow">→</span> Registered to x402 Explorer</div>
+        </div>
+      </div>
+      <div class="demo-window">
+        <div class="demo-window-header">
+          <span class="demo-dot red"></span>
+          <span class="demo-dot yellow"></span>
+          <span class="demo-dot green"></span>
+        </div>
+        <div class="demo-flow">
+          <div class="flow-item">
+            <div class="flow-icon request">→</div>
+            <div class="flow-text"><strong>Client requests</strong> get_btc_price</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-icon payment">$</div>
+            <div class="flow-text"><strong>402 Payment Required</strong> $0.001 USDC.e</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-icon verify">✓</div>
+            <div class="flow-text"><strong>Payment verified</strong> via Facilitator</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-icon success">✓</div>
+            <div class="flow-text"><strong>Response sent</strong> BTC: $98,450</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  
+  <section>
+    <div class="section-badge">
+      <span class="dot"></span>
+      <span>Getting Started</span>
+    </div>
+    <h2 class="section-title">Two ways to use CronosMCP</h2>
+    <p class="section-subtitle">Build paid APIs or discover existing tools in the ecosystem.</p>
+    
+    <div class="pillars-grid">
+      <div class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3>Server SDK</h3>
+        <p>
+          Build x402 enabled tools and APIs with built in payment handling. Set your price (or make it free), deploy, and receive USDC.e directly to your wallet.
+        </p>
+        <a href="https://docs.cronosmcp.com" class="pillar-link">Get Started →</a>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">
+          <img src="x402_logo.webp" alt="x402">
+        </div>
+        <h3>x402 Explorer</h3>
+        <p>
+          Discover all x402 enabled tools and services on Cronos, both free and paid. Browse by category, price, or capability. The open registry for x402 APIs.
+        </p>
+        <a href="/explorer" class="pillar-link">Browse Registry →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stripe-border"></div>
+
+  <section>
+    <div class="section-badge">
+      <span class="dot"></span>
+      <span>SDK Features</span>
+    </div>
+    <h2 class="section-title">What the SDK handles</h2>
+    <p class="section-subtitle">Focus on your tool logic. We handle everything else.</p>
+    
+    <div class="bento-grid">
+      <div class="bento-item">
+        <div class="bento-icon">
+          <img src="x402_logo.webp" alt="x402">
+        </div>
+        <h3>x402 Protocol</h3>
+        <p>Payment requests, EIP-712 signatures, and verification handled automatically.</p>
+      </div>
+      <div class="bento-item">
+        <div class="bento-icon">
+          <img src="cronos_logo.webp" alt="Cronos">
+        </div>
+        <h3>Cronos Settlement</h3>
+        <p>Instant USDC.e payments directly to your wallet. Low fees, fast confirmations.</p>
+      </div>
+      <div class="bento-item">
+        <div class="bento-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5M19.1 4.9c3.9 3.9 3.9 10.3 0 14.2"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </div>
+        <h3>Auto Discovery</h3>
+        <p>Tools using CronosMCP SDK auto-register to the x402 Explorer on startup. No manual setup needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="explorer-section">
+    <div class="explorer-inner">
+    <div class="explorer-content">
+      <div class="section-badge">
+        <span class="dot"></span>
+        <span>Explorer</span>
+      </div>
+      <h2 class="section-title">x402 Explorer</h2>
+      <p class="section-subtitle" style="margin-bottom: 24px;">
+        The central hub for discovering x402 enabled tools on Cronos. Tools built with CronosMCP SDK are automatically added.
+      </p>
+      <ul class="explorer-features">
+        <li>
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          Tools using CronosMCP SDK auto-register on startup
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          Filter by free or paid services
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          View endpoint URLs and pricing details
+        </li>
+      </ul>
+      <a href="/explorer" class="btn-primary">Open Explorer</a>
+      <a href="/register" class="btn-outline" style="margin-left: 12px;">Register</a>
+    </div>
+    </div>
+  </div>
+
+  <div class="stripe-border"></div>
+
+  <div class="code-section">
+    <div class="code-inner">
+    <div class="section-badge">
+      <span class="dot"></span>
+      <span>Quick Start</span>
+    </div>
+    <h2 class="section-title">From zero to deployed</h2>
+    <p class="section-subtitle">No payment gateways. Just npm install.</p>
+    
+    <div class="code-grid">
+      <ul class="code-steps">
+        <li class="code-step">
+          <span class="step-num">1</span>
+          <span class="step-text">Set your wallet address</span>
+        </li>
+        <li class="code-step">
+          <span class="step-num">2</span>
+          <span class="step-text">Define your tool (free or paid)</span>
+        </li>
+        <li class="code-step">
+          <span class="step-num">3</span>
+          <span class="step-text">Start the server</span>
+        </li>
+        <li class="code-step">
+          <span class="step-num">4</span>
+          <span class="step-text">Receive USDC.e payments through x402</span>
+        </li>
+      </ul>
+      <div class="code-window">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-title">server.ts</span>
+        </div>
+        <div class="code-content" id="codeContent"></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <section class="cta">
+    <div class="section-badge">
+      <span class="dot"></span>
+      <span>Get Started</span>
+    </div>
+    <h2>Start building x402 tools today</h2>
+    <p>Install the SDK and deploy your first tool in minutes</p>
+    <div class="cta-buttons">
+      <a href="https://docs.cronosmcp.com" class="btn-primary">Read the Docs</a>
+      <a href="/register" class="btn-outline">Register Your Tools</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">
+      <img src="cronos_mcp.webp" alt="CronosMCP" style="height: 36px;">
+    </div>
+    <nav>
+      <a href="https://github.com" target="_blank">GitHub</a>
+      <a href="https://docs.cronosmcp.com">Docs</a>
+      <a href="/explorer">Explorer</a>
+    </nav>
+  </footer>
+
+  <script>
+    const codeLines = [
+      { text: '<span class="purple">import</span> <span class="white">{ createServer }</span> <span class="purple">from</span> <span class="green">\'@cronos-mcp/server-sdk\'</span><span class="white">;</span>' },
+      { text: '' },
+      { text: '<span class="purple">const</span> <span class="white">server =</span> <span class="yellow">createServer</span><span class="white">({</span>' },
+      { text: '  <span class="white">name:</span> <span class="green">\'My API\'</span><span class="white">,</span>' },
+      { text: '  <span class="white">paymentAddress:</span> <span class="green">\'0xYourWallet...\'</span><span class="white">,</span>' },
+      { text: '  <span class="white">network:</span> <span class="green">\'mainnet\'</span><span class="white">,</span>' },
+      { text: '<span class="white">});</span>' },
+      { text: '' },
+      { text: '<span class="white">server.</span><span class="yellow">addTool</span><span class="white">({</span>' },
+      { text: '  <span class="white">name:</span> <span class="green">\'get_data\'</span><span class="white">,</span>' },
+      { text: '  <span class="white">price:</span> <span class="green">\'5000\'</span><span class="white">,</span> <span class="comment">// $0.005 or \'0\'</span>' },
+      { text: '  <span class="white">handler:</span> <span class="purple">async</span> <span class="white">(params) => {</span>' },
+      { text: '    <span class="purple">return</span> <span class="white">{ data:</span> <span class="green">\'...\'</span> <span class="white">};</span>' },
+      { text: '  <span class="white">}</span>' },
+      { text: '<span class="white">});</span>' },
+      { text: '' },
+      { text: '<span class="white">server.</span><span class="yellow">start</span><span class="white">();</span>' },
+    ];
+
+    const codeContent = document.getElementById('codeContent');
+    let animationStarted = false;
+
+    function typeCode() {
+      codeContent.innerHTML = '';
+      
+      codeLines.forEach((line, index) => {
+        const lineEl = document.createElement('div');
+        lineEl.className = 'code-line';
+        lineEl.innerHTML = line.text || '&nbsp;';
+        codeContent.appendChild(lineEl);
+        
+        setTimeout(() => {
+          lineEl.classList.add('typed');
+        }, index * 100);
+      });
+
+      setTimeout(() => {
+        const lastLine = codeContent.lastElementChild;
+        lastLine.innerHTML += '<span class="cursor"></span>';
+      }, codeLines.length * 100);
+
+      setTimeout(() => {
+        typeCode();
+      }, (codeLines.length * 100) + 4000);
+    }
+
+    // Scroll animations for code steps
+    const stepsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const steps = entry.target.querySelectorAll('.code-step');
+          steps.forEach((step, index) => {
+            setTimeout(() => step.classList.add('visible'), index * 150);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.code-steps').forEach(el => stepsObserver.observe(el));
+
+    // Start code animation when visible
+    const codeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !animationStarted) {
+          animationStarted = true;
+          typeCode();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.code-window').forEach(el => codeObserver.observe(el));
+  </script>
+
+  <!-- Gasless Transfer Modal -->
+  <div class="modal-overlay" id="transferModal" onclick="closeTransferModal(event)">
+    <div class="transfer-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-logo">💸</div>
+        <div>
+          <div class="modal-title">Send USDC.e</div>
+          <div class="modal-subtitle">Powered by x402 Protocol</div>
+        </div>
+        <div class="gasless-badge">⛽ GASLESS</div>
+        <button class="modal-close" onclick="closeTransferModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Network Selector -->
+        <div class="network-selector">
+          <button class="network-btn active" data-network="testnet" onclick="selectNetwork('testnet')">
+            🧪 Testnet
+          </button>
+          <button class="network-btn" data-network="mainnet" onclick="selectNetwork('mainnet')">
+            🌐 Mainnet
+          </button>
+        </div>
+
+        <!-- Not Connected State -->
+        <div id="connect-state">
+          <div class="info-box">
+            <div class="info-title">✨ How it works</div>
+            <div class="info-text">
+              Send USDC.e to anyone without paying gas fees! The x402 protocol handles everything - you just sign and send.
+            </div>
+          </div>
+          <button class="connect-wallet-btn" onclick="connectWallet()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="6" width="20" height="12" rx="2"/>
+              <path d="M22 10H2"/>
+              <circle cx="16" cy="14" r="2"/>
+            </svg>
+            Connect Wallet
+          </button>
+        </div>
+
+        <!-- Connected State -->
+        <div id="transfer-state" class="hidden">
+          <div class="wallet-display">
+            <div class="wallet-avatar"></div>
+            <div class="wallet-info">
+              <div class="wallet-label">Connected</div>
+              <div class="wallet-address" id="wallet-address">0x...</div>
+            </div>
+            <div class="wallet-balance">
+              <div class="balance-label">USDC.e Balance</div>
+              <div class="balance-value" id="wallet-balance">0.00</div>
+            </div>
+            <button class="disconnect-btn" onclick="disconnectWallet()">✕</button>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Recipient Address</label>
+            <input type="text" class="input-field address" id="recipient" placeholder="0x..." />
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Amount</label>
+            <div class="amount-input-wrapper">
+              <input type="number" class="input-field" id="amount" placeholder="0.00" step="0.000001" min="0" />
+              <span class="amount-suffix">USDC.e</span>
+            </div>
+            <div class="quick-amounts">
+              <button class="quick-amount" onclick="setAmount(0.01)">$0.01</button>
+              <button class="quick-amount" onclick="setAmount(0.10)">$0.10</button>
+              <button class="quick-amount" onclick="setAmount(1.00)">$1.00</button>
+              <button class="quick-amount" onclick="setAmount(10.00)">$10.00</button>
+            </div>
+          </div>
+
+          <button class="send-btn" id="send-btn" onclick="sendTransfer()">
+            <span id="send-btn-text">Send USDC.e</span>
+          </button>
+
+          <!-- Transaction Status -->
+          <div id="tx-status" class="hidden"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-text">
+          Built with <a href="https://cronosmcp.com" target="_blank">CronosMCP</a> • 
+          <a href="https://docs.cronos.org/cronos-x402-facilitator" target="_blank">x402 Docs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =============================================================================
+    // Gasless Transfer Widget - Configuration
+    // =============================================================================
+    
+    const TRANSFER_CONFIG = {
+      testnet: {
+        chainId: 338,
+        chainIdHex: '0x152',
+        networkId: 'cronos-testnet',
+        networkName: 'Cronos Testnet',
+        rpcUrl: 'https://evm-t3.cronos.org',
+        explorerUrl: 'https://explorer.cronos.org/testnet',
+        usdcAddress: '0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0',
+        facilitatorUrl: 'https://facilitator.cronoslabs.org/v2/x402',
+        symbol: 'TCRO'
+      },
+      mainnet: {
+        chainId: 25,
+        chainIdHex: '0x19',
+        networkId: 'cronos-mainnet',
+        networkName: 'Cronos Mainnet',
+        rpcUrl: 'https://evm.cronos.org',
+        explorerUrl: 'https://explorer.cronos.org',
+        usdcAddress: '0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C',
+        facilitatorUrl: 'https://facilitator.cronoslabs.org/v2/x402',
+        symbol: 'CRO'
+      }
+    };
+
+    // EIP-712 Domain (CRITICAL - must be exact!)
+    const EIP712_DOMAIN = {
+      name: 'Bridged USDC (Stargate)',
+      version: '1'
+    };
+
+    // State
+    let currentNetwork = 'testnet';
+    let provider = null;
+    let signer = null;
+    let walletAddress = null;
+
+    // =============================================================================
+    // Modal Controls
+    // =============================================================================
+
+    function openTransferModal() {
+      document.getElementById('transferModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTransferModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('transferModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Close on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeTransferModal();
+    });
+
+    // =============================================================================
+    // Network Selection
+    // =============================================================================
+
+    function selectNetwork(network) {
+      currentNetwork = network;
+      
+      // Update UI
+      document.querySelectorAll('.network-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.network === network);
+      });
+
+      // If connected, refresh balance
+      if (walletAddress) {
+        updateBalance();
+      }
+    }
+
+    // =============================================================================
+    // Wallet Connection (with proper async detection)
+    // =============================================================================
+
+    async function detectEthereumProvider(timeout = 3000) {
+      // Check if already available
+      if (window.ethereum) {
+        return window.ethereum;
+      }
+
+      // Wait for injection (MetaMask might inject async)
+      return new Promise((resolve) => {
+        // Listen for the ethereum#initialized event
+        const handleEthereum = () => {
+          window.removeEventListener('ethereum#initialized', handleEthereum);
+          resolve(window.ethereum);
+        };
+
+        window.addEventListener('ethereum#initialized', handleEthereum);
+
+        // Also check periodically
+        const checkInterval = setInterval(() => {
+          if (window.ethereum) {
+            clearInterval(checkInterval);
+            window.removeEventListener('ethereum#initialized', handleEthereum);
+            resolve(window.ethereum);
+          }
+        }, 100);
+
+        // Timeout
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          window.removeEventListener('ethereum#initialized', handleEthereum);
+          resolve(window.ethereum || null);
+        }, timeout);
+      });
+    }
+
+    async function connectWallet() {
+      // Wait for provider detection
+      const ethereum = await detectEthereumProvider();
+      
+      if (!ethereum) {
+        alert('Please install MetaMask or another Web3 wallet!\n\nNote: If you opened this page via file://, please serve it via HTTP instead (e.g., using a local server).');
+        return;
+      }
+
+      try {
+        const config = TRANSFER_CONFIG[currentNetwork];
+
+        // Request accounts
+        const accounts = await ethereum.request({ 
+          method: 'eth_requestAccounts' 
+        });
+
+        // Switch to correct network
+        try {
+          await ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: config.chainIdHex }]
+          });
+        } catch (switchError) {
+          // Network not added, try to add it
+          if (switchError.code === 4902) {
+            await ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: config.chainIdHex,
+                chainName: config.networkName,
+                rpcUrls: [config.rpcUrl],
+                nativeCurrency: {
+                  name: 'Cronos',
+                  symbol: config.symbol,
+                  decimals: 18
+                },
+                blockExplorerUrls: [config.explorerUrl]
+              }]
+            });
+          } else {
+            throw switchError;
+          }
+        }
+
+        // Setup ethers
+        provider = new ethers.providers.Web3Provider(ethereum);
+        signer = provider.getSigner();
+        walletAddress = accounts[0];
+
+        // Update UI
+        document.getElementById('wallet-address').textContent = 
+          walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+        
+        document.getElementById('connect-state').classList.add('hidden');
+        document.getElementById('transfer-state').classList.remove('hidden');
+
+        // Get balance
+        await updateBalance();
+
+      } catch (error) {
+        console.error('Connection error:', error);
+        alert('Failed to connect wallet: ' + error.message);
+      }
+    }
+
+    function disconnectWallet() {
+      provider = null;
+      signer = null;
+      walletAddress = null;
+
+      document.getElementById('connect-state').classList.remove('hidden');
+      document.getElementById('transfer-state').classList.add('hidden');
+      document.getElementById('tx-status').classList.add('hidden');
+    }
+
+    async function updateBalance() {
+      const config = TRANSFER_CONFIG[currentNetwork];
+      
+      // USDC.e ABI (just balanceOf)
+      const abi = ['function balanceOf(address) view returns (uint256)'];
+      const usdc = new ethers.Contract(config.usdcAddress, abi, provider);
+      
+      try {
+        const balance = await usdc.balanceOf(walletAddress);
+        const formatted = ethers.utils.formatUnits(balance, 6);
+        document.getElementById('wallet-balance').textContent = 
+          parseFloat(formatted).toFixed(2);
+      } catch (error) {
+        console.error('Balance error:', error);
+        document.getElementById('wallet-balance').textContent = '—';
+      }
+    }
+
+    // =============================================================================
+    // Transfer
+    // =============================================================================
+
+    function setAmount(value) {
+      document.getElementById('amount').value = value;
+    }
+
+    async function sendTransfer() {
+      const recipient = document.getElementById('recipient').value.trim();
+      const amountStr = document.getElementById('amount').value;
+
+      // Validation
+      if (!ethers.utils.isAddress(recipient)) {
+        alert('Please enter a valid recipient address');
+        return;
+      }
+
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+
+      const config = TRANSFER_CONFIG[currentNetwork];
+      const amountBase = Math.floor(amount * 1_000_000).toString();
+
+      // Update UI
+      const btn = document.getElementById('send-btn');
+      const btnText = document.getElementById('send-btn-text');
+      btn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div> Signing...';
+
+      showTxStatus('pending', 'Preparing transaction...');
+
+      try {
+        // Generate nonce
+        const nonce = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32)))
+          .map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // Timestamps
+        const validAfter = 0;
+        const validBefore = Math.floor(Date.now() / 1000) + 300;
+
+        // EIP-712 Domain
+        const domain = {
+          name: EIP712_DOMAIN.name,
+          version: EIP712_DOMAIN.version,
+          chainId: config.chainId,
+          verifyingContract: config.usdcAddress
+        };
+
+        // EIP-712 Types
+        const types = {
+          TransferWithAuthorization: [
+            { name: 'from', type: 'address' },
+            { name: 'to', type: 'address' },
+            { name: 'value', type: 'uint256' },
+            { name: 'validAfter', type: 'uint256' },
+            { name: 'validBefore', type: 'uint256' },
+            { name: 'nonce', type: 'bytes32' }
+          ]
+        };
+
+        // Message
+        const message = {
+          from: walletAddress,
+          to: recipient,
+          value: amountBase,
+          validAfter: validAfter,
+          validBefore: validBefore,
+          nonce: nonce
+        };
+
+        showTxStatus('pending', 'Please sign in your wallet...');
+
+        // Sign with EIP-712
+        const signature = await signer._signTypedData(domain, types, message);
+
+        showTxStatus('pending', 'Submitting to x402 Facilitator...');
+        btnText.textContent = 'Processing...';
+
+        // Create x402 payload (FLAT structure!)
+        const payload = {
+          x402Version: 1,
+          scheme: 'exact',
+          network: config.networkId,
+          payload: {
+            from: walletAddress,
+            to: recipient,
+            value: amountBase,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: nonce,
+            signature: signature,
+            asset: config.usdcAddress
+          }
+        };
+
+        console.log('Sending to network:', config.networkId);
+        console.log('Payload:', JSON.stringify(payload, null, 2));
+
+        // Base64 encode
+        const paymentHeader = btoa(JSON.stringify(payload));
+
+        // Payment requirements (for facilitator)
+        const paymentRequirements = {
+          scheme: 'exact',
+          network: config.networkId,
+          maxAmountRequired: amountBase,
+          resource: 'transfer://direct',
+          description: 'Direct USDC.e transfer',
+          mimeType: 'application/json',
+          payTo: recipient,
+          maxTimeoutSeconds: 300,
+          asset: config.usdcAddress
+        };
+
+        // Call facilitator settle
+        const response = await fetch(`${config.facilitatorUrl}/settle`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X402-Version': '1'
+          },
+          body: JSON.stringify({
+            x402Version: 1,
+            paymentHeader: paymentHeader,
+            paymentRequirements: paymentRequirements
+          })
+        });
+
+        const result = await response.json();
+        console.log('Facilitator response:', result);
+
+        if (result.event === 'payment.settled' && result.txHash) {
+          const settledNetwork = result.network || config.networkId;
+          showTxStatus('success', `Transfer successful on ${settledNetwork}!`, result.txHash, settledNetwork);
+          await updateBalance();
+        } else {
+          throw new Error(result.error || 'Transfer failed');
+        }
+
+      } catch (error) {
+        console.error('Transfer error:', error);
+        showTxStatus('error', error.message || 'Transfer failed');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Send USDC.e';
+      }
+    }
+
+    function showTxStatus(type, message, txHash = null, settledNetwork = null) {
+      const statusDiv = document.getElementById('tx-status');
+      statusDiv.classList.remove('hidden', 'pending', 'success', 'error');
+      statusDiv.classList.add(type);
+
+      // Use actual settled network for explorer
+      let explorerUrl;
+      if (settledNetwork === 'cronos-mainnet') {
+        explorerUrl = 'https://explorer.cronos.org';
+      } else if (settledNetwork === 'cronos-testnet') {
+        explorerUrl = 'https://explorer.cronos.org/testnet';
+      } else {
+        explorerUrl = TRANSFER_CONFIG[currentNetwork].explorerUrl;
+      }
+      
+      const icon = type === 'pending' ? '<div class="spinner"></div>' : 
+                   type === 'success' ? '✅' : '❌';
+
+      let html = `
+        <div class="tx-status-header">
+          ${icon}
+          <span>${message}</span>
+        </div>
+      `;
+
+      if (txHash) {
+        html += `
+          <div class="tx-hash">
+            TX: <a href="${explorerUrl}/tx/${txHash}" target="_blank">${txHash.slice(0, 20)}...</a>
+          </div>
+        `;
+      }
+
+      statusDiv.innerHTML = html;
+    }
+
+    // =============================================================================
+    // Event Listeners
+    // =============================================================================
+
+    // Handle account/chain changes
+    window.addEventListener('load', async () => {
+      const ethereum = await detectEthereumProvider(1000);
+      if (ethereum) {
+        ethereum.on('accountsChanged', (accounts) => {
+          if (accounts.length === 0) {
+            disconnectWallet();
+          } else if (walletAddress) {
+            walletAddress = accounts[0];
+            document.getElementById('wallet-address').textContent = 
+              walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+            updateBalance();
+          }
+        });
+
+        ethereum.on('chainChanged', () => {
+          if (walletAddress) {
+            updateBalance();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

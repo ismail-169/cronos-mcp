@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gasless USDC.e Transfer | CronosMCP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cyan: #22d3ee;
+      --purple: #8B5CF6;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --navy: #0a0f1a;
+      --bg: #fafafa;
+      --border: #1a1a1a;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0f1a 0%, #1a1f3a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .widget-container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .widget {
+      background: #fff;
+      border: 3px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 8px 8px 0 var(--border);
+      overflow: hidden;
+    }
+
+    .widget-header {
+      background: var(--navy);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .widget-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .widget-title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .widget-subtitle {
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .gasless-badge {
+      margin-left: auto;
+      background: var(--green);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 2px solid var(--border);
+    }
+
+    .widget-body {
+      padding: 24px;
+    }
+
+    .network-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .network-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .network-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .network-btn.active {
+      background: var(--cyan);
+      box-shadow: 3px 3px 0 var(--border);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--border);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      background: #fff;
+      transition: all 0.15s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      box-shadow: 4px 4px 0 var(--cyan);
+    }
+
+    .input-field.address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .amount-input-wrapper {
+      position: relative;
+    }
+
+    .amount-input-wrapper .input-field {
+      padding-right: 80px;
+    }
+
+    .amount-suffix {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .quick-amounts {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-amount {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid #e5e5e5;
+      border-radius: 6px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quick-amount:hover {
+      border-color: var(--purple);
+      background: #f5f0ff;
+    }
+
+    .wallet-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #f5f5f5;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .wallet-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border-radius: 50%;
+      border: 2px solid var(--border);
+    }
+
+    .wallet-info {
+      flex: 1;
+    }
+
+    .wallet-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .wallet-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .wallet-balance {
+      text-align: right;
+    }
+
+    .balance-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .balance-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .disconnect-btn {
+      background: none;
+      border: none;
+      color: var(--red);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .connect-btn, .send-btn {
+      width: 100%;
+      padding: 16px;
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .connect-btn {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--border);
+    }
+
+    .connect-btn:hover {
+      box-shadow: 7px 7px 0 var(--border);
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--border);
+    }
+
+    .send-btn:hover:not(:disabled) {
+      box-shadow: 7px 7px 0 var(--border);
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: 3px 3px 0 #999;
+    }
+
+    .info-box {
+      background: #f0f9ff;
+      border: 2px solid var(--cyan);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+
+    .info-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .tx-status {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 10px;
+      border: 2px solid;
+    }
+
+    .tx-status.pending {
+      background: #fffbeb;
+      border-color: var(--orange);
+    }
+
+    .tx-status.success {
+      background: #f0fdf4;
+      border-color: var(--green);
+    }
+
+    .tx-status.error {
+      background: #fef2f2;
+      border-color: var(--red);
+    }
+
+    .tx-status-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tx-hash {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    .tx-hash a {
+      color: var(--purple);
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e5e5e5;
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 16px;
+      border-top: 2px solid #e5e5e5;
+      background: #fafafa;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .footer-text a {
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: slideIn 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-container">
+    <div class="widget">
+      <div class="widget-header">
+        <div class="widget-logo">💸</div>
+        <div>
+          <div class="widget-title">Send USDC.e</div>
+          <div class="widget-subtitle">Powered by x402 Protocol</div>
+        </div>
+        <div class="gasless-badge">⛽ GASLESS</div>
+      </div>
+
+      <div class="widget-body">
+        <!-- Network Selector -->
+        <div class="network-selector">
+          <button class="network-btn active" data-network="testnet" onclick="selectNetwork('testnet')">
+            🧪 Testnet
+          </button>
+          <button class="network-btn" data-network="mainnet" onclick="selectNetwork('mainnet')">
+            🌐 Mainnet
+          </button>
+        </div>
+
+        <!-- Not Connected State -->
+        <div id="connect-state">
+          <div class="info-box" style="margin-bottom: 20px;">
+            <div class="info-title">✨ How it works</div>
+            <div class="info-text">
+              Send USDC.e to anyone without paying gas fees! The x402 protocol handles everything - you just sign and send.
+            </div>
+          </div>
+          <button class="connect-btn" onclick="connectWallet()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="6" width="20" height="12" rx="2"/>
+              <path d="M22 10H2"/>
+              <circle cx="16" cy="14" r="2"/>
+            </svg>
+            Connect Wallet
+          </button>
+        </div>
+
+        <!-- Connected State -->
+        <div id="transfer-state" class="hidden">
+          <div class="wallet-display animate-in">
+            <div class="wallet-avatar"></div>
+            <div class="wallet-info">
+              <div class="wallet-label">Connected</div>
+              <div class="wallet-address" id="wallet-address">0x...</div>
+            </div>
+            <div class="wallet-balance">
+              <div class="balance-label">USDC.e Balance</div>
+              <div class="balance-value" id="wallet-balance">0.00</div>
+            </div>
+            <button class="disconnect-btn" onclick="disconnectWallet()">✕</button>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Recipient Address</label>
+            <input type="text" class="input-field address" id="recipient" placeholder="0x..." />
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Amount</label>
+            <div class="amount-input-wrapper">
+              <input type="number" class="input-field" id="amount" placeholder="0.00" step="0.000001" min="0" />
+              <span class="amount-suffix">USDC.e</span>
+            </div>
+            <div class="quick-amounts">
+              <button class="quick-amount" onclick="setAmount(0.01)">$0.01</button>
+              <button class="quick-amount" onclick="setAmount(0.10)">$0.10</button>
+              <button class="quick-amount" onclick="setAmount(1.00)">$1.00</button>
+              <button class="quick-amount" onclick="setAmount(10.00)">$10.00</button>
+            </div>
+          </div>
+
+          <button class="send-btn" id="send-btn" onclick="sendTransfer()">
+            <span id="send-btn-text">Send USDC.e</span>
+          </button>
+
+          <!-- Transaction Status -->
+          <div id="tx-status" class="hidden"></div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-text">
+          Built with <a href="https://cronosmcp.com" target="_blank">CronosMCP</a> • 
+          <a href="https://docs.cronos.org/cronos-x402-facilitator" target="_blank">x402 Docs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =============================================================================
+    // Configuration
+    // =============================================================================
+    
+    const CONFIG = {
+      testnet: {
+        chainId: 338,
+        chainIdHex: '0x152',
+        networkId: 'cronos-testnet',
+        rpcUrl: 'https://evm-t3.cronos.org',
+        explorerUrl: 'https://explorer.cronos.org/testnet',
+        usdcAddress: '0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0',
+        facilitatorUrl: 'https://facilitator.cronoslabs.org/v2/x402'
+      },
+      mainnet: {
+        chainId: 25,
+        chainIdHex: '0x19',
+        networkId: 'cronos-mainnet',
+        rpcUrl: 'https://evm.cronos.org',
+        explorerUrl: 'https://explorer.cronos.org',
+        usdcAddress: '0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C',
+        facilitatorUrl: 'https://facilitator.cronoslabs.org/v2/x402'
+      }
+    };
+
+    // EIP-712 Domain (CRITICAL - must be exact!)
+    const EIP712_DOMAIN = {
+      name: 'Bridged USDC (Stargate)',
+      version: '1'
+    };
+
+    // State
+    let currentNetwork = 'testnet';
+    let provider = null;
+    let signer = null;
+    let walletAddress = null;
+
+    // =============================================================================
+    // Network Selection
+    // =============================================================================
+
+    function selectNetwork(network) {
+      currentNetwork = network;
+      
+      // Update UI
+      document.querySelectorAll('.network-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.network === network);
+      });
+
+      // If connected, refresh balance
+      if (walletAddress) {
+        updateBalance();
+      }
+    }
+
+    // =============================================================================
+    // Wallet Connection
+    // =============================================================================
+
+    async function connectWallet() {
+      if (!window.ethereum) {
+        alert('Please install MetaMask or another Web3 wallet!');
+        return;
+      }
+
+      try {
+        const config = CONFIG[currentNetwork];
+
+        // Request accounts
+        const accounts = await window.ethereum.request({ 
+          method: 'eth_requestAccounts' 
+        });
+
+        // Switch to correct network
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: config.chainIdHex }]
+          });
+        } catch (switchError) {
+          // Network not added, try to add it
+          if (switchError.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: config.chainIdHex,
+                chainName: currentNetwork === 'mainnet' ? 'Cronos Mainnet' : 'Cronos Testnet',
+                rpcUrls: [config.rpcUrl],
+                nativeCurrency: {
+                  name: 'CRO',
+                  symbol: currentNetwork === 'mainnet' ? 'CRO' : 'TCRO',
+                  decimals: 18
+                },
+                blockExplorerUrls: [config.explorerUrl]
+              }]
+            });
+          }
+        }
+
+        // Setup ethers
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        walletAddress = accounts[0];
+
+        // Update UI
+        document.getElementById('wallet-address').textContent = 
+          walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+        
+        document.getElementById('connect-state').classList.add('hidden');
+        document.getElementById('transfer-state').classList.remove('hidden');
+
+        // Get balance
+        await updateBalance();
+
+      } catch (error) {
+        console.error('Connection error:', error);
+        alert('Failed to connect wallet: ' + error.message);
+      }
+    }
+
+    function disconnectWallet() {
+      provider = null;
+      signer = null;
+      walletAddress = null;
+
+      document.getElementById('connect-state').classList.remove('hidden');
+      document.getElementById('transfer-state').classList.add('hidden');
+      document.getElementById('tx-status').classList.add('hidden');
+    }
+
+    async function updateBalance() {
+      const config = CONFIG[currentNetwork];
+      
+      // USDC.e ABI (just balanceOf)
+      const abi = ['function balanceOf(address) view returns (uint256)'];
+      const usdc = new ethers.Contract(config.usdcAddress, abi, provider);
+      
+      try {
+        const balance = await usdc.balanceOf(walletAddress);
+        const formatted = ethers.utils.formatUnits(balance, 6);
+        document.getElementById('wallet-balance').textContent = 
+          parseFloat(formatted).toFixed(2);
+      } catch (error) {
+        console.error('Balance error:', error);
+        document.getElementById('wallet-balance').textContent = '—';
+      }
+    }
+
+    // =============================================================================
+    // Transfer
+    // =============================================================================
+
+    function setAmount(value) {
+      document.getElementById('amount').value = value;
+    }
+
+    async function sendTransfer() {
+      const recipient = document.getElementById('recipient').value.trim();
+      const amountStr = document.getElementById('amount').value;
+
+      // Validation
+      if (!ethers.utils.isAddress(recipient)) {
+        alert('Please enter a valid recipient address');
+        return;
+      }
+
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+
+      const config = CONFIG[currentNetwork];
+      const amountBase = Math.floor(amount * 1_000_000).toString(); // USDC has 6 decimals
+
+      // Update UI
+      const btn = document.getElementById('send-btn');
+      const btnText = document.getElementById('send-btn-text');
+      btn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div> Signing...';
+
+      showTxStatus('pending', 'Preparing transaction...');
+
+      try {
+        // Generate nonce
+        const nonce = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32)))
+          .map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // Timestamps
+        const validAfter = 0;
+        const validBefore = Math.floor(Date.now() / 1000) + 300; // 5 minutes
+
+        // EIP-712 Domain
+        const domain = {
+          name: EIP712_DOMAIN.name,
+          version: EIP712_DOMAIN.version,
+          chainId: config.chainId,
+          verifyingContract: config.usdcAddress
+        };
+
+        // EIP-712 Types
+        const types = {
+          TransferWithAuthorization: [
+            { name: 'from', type: 'address' },
+            { name: 'to', type: 'address' },
+            { name: 'value', type: 'uint256' },
+            { name: 'validAfter', type: 'uint256' },
+            { name: 'validBefore', type: 'uint256' },
+            { name: 'nonce', type: 'bytes32' }
+          ]
+        };
+
+        // Message
+        const message = {
+          from: walletAddress,
+          to: recipient,
+          value: amountBase,
+          validAfter: validAfter,
+          validBefore: validBefore,
+          nonce: nonce
+        };
+
+        showTxStatus('pending', 'Please sign in your wallet...');
+
+        // Sign with EIP-712
+        const signature = await signer._signTypedData(domain, types, message);
+
+        showTxStatus('pending', 'Submitting to x402 Facilitator...');
+        btnText.textContent = 'Processing...';
+
+        // Create x402 payload (FLAT structure!)
+        const payload = {
+          x402Version: 1,
+          scheme: 'exact',
+          network: config.networkId,
+          payload: {
+            from: walletAddress,
+            to: recipient,
+            value: amountBase,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: nonce,
+            signature: signature,
+            asset: config.usdcAddress
+          }
+        };
+
+        // Base64 encode
+        const paymentHeader = btoa(JSON.stringify(payload));
+
+        // Payment requirements (for facilitator)
+        const paymentRequirements = {
+          scheme: 'exact',
+          network: config.networkId,
+          maxAmountRequired: amountBase,
+          resource: 'transfer://direct',
+          description: 'Direct USDC.e transfer',
+          mimeType: 'application/json',
+          payTo: recipient,
+          maxTimeoutSeconds: 300,
+          asset: config.usdcAddress
+        };
+
+        // Debug: Log what we're sending
+        console.log('='.repeat(60));
+        console.log('📤 SENDING TO FACILITATOR');
+        console.log('='.repeat(60));
+        console.log('Network:', config.networkId);
+        console.log('Chain ID:', config.chainId);
+        console.log('USDC Address:', config.usdcAddress);
+        console.log('Payload:', JSON.stringify(payload, null, 2));
+        console.log('Payment Requirements:', JSON.stringify(paymentRequirements, null, 2));
+        console.log('='.repeat(60));
+
+        // Call facilitator settle
+        const response = await fetch(`${config.facilitatorUrl}/settle`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X402-Version': '1'
+          },
+          body: JSON.stringify({
+            x402Version: 1,
+            paymentHeader: paymentHeader,
+            paymentRequirements: paymentRequirements
+          })
+        });
+
+        const result = await response.json();
+        
+        // Debug: Log response
+        console.log('='.repeat(60));
+        console.log('📥 FACILITATOR RESPONSE');
+        console.log('='.repeat(60));
+        console.log('Response:', JSON.stringify(result, null, 2));
+        console.log('Reported Network:', result.network);
+        console.log('='.repeat(60));
+
+        if (result.event === 'payment.settled' && result.txHash) {
+          // Check if network matches what we requested
+          const settledNetwork = result.network || 'unknown';
+          const networkMatch = settledNetwork === config.networkId;
+          
+          if (!networkMatch) {
+            console.warn('⚠️ NETWORK MISMATCH!');
+            console.warn('Requested:', config.networkId);
+            console.warn('Settled on:', settledNetwork);
+          }
+          
+          showTxStatus(
+            'success', 
+            `Transfer successful on ${settledNetwork}!${!networkMatch ? ' ⚠️ WRONG NETWORK!' : ''}`, 
+            result.txHash,
+            settledNetwork
+          );
+          await updateBalance();
+        } else {
+          throw new Error(result.error || 'Transfer failed');
+        }
+
+      } catch (error) {
+        console.error('Transfer error:', error);
+        showTxStatus('error', error.message || 'Transfer failed');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Send USDC.e';
+      }
+    }
+
+    function showTxStatus(type, message, txHash = null, settledNetwork = null) {
+      const statusDiv = document.getElementById('tx-status');
+      statusDiv.classList.remove('hidden', 'pending', 'success', 'error');
+      statusDiv.classList.add(type);
+
+      // Use the actual settled network for explorer, not requested network
+      let explorerUrl;
+      if (settledNetwork === 'cronos-mainnet') {
+        explorerUrl = 'https://explorer.cronos.org';
+      } else if (settledNetwork === 'cronos-testnet') {
+        explorerUrl = 'https://explorer.cronos.org/testnet';
+      } else {
+        explorerUrl = CONFIG[currentNetwork].explorerUrl;
+      }
+      
+      const icon = type === 'pending' ? '<div class="spinner"></div>' : 
+                   type === 'success' ? '✅' : '❌';
+
+      let html = `
+        <div class="tx-status-header">
+          ${icon}
+          <span>${message}</span>
+        </div>
+      `;
+
+      if (txHash) {
+        html += `
+          <div class="tx-hash">
+            TX: <a href="${explorerUrl}/tx/${txHash}" target="_blank">${txHash.slice(0, 20)}...</a>
+          </div>
+          <div style="margin-top: 8px; font-size: 11px; color: #666;">
+            Explorer: ${explorerUrl}
+          </div>
+        `;
+      }
+
+      statusDiv.innerHTML = html;
+    }
+
+    // =============================================================================
+    // Event Listeners
+    // =============================================================================
+
+    // Handle account changes
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length === 0) {
+          disconnectWallet();
+        } else {
+          walletAddress = accounts[0];
+          document.getElementById('wallet-address').textContent = 
+            walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+          updateBalance();
+        }
+      });
+
+      window.ethereum.on('chainChanged', () => {
+        window.location.reload();
+      });
+    }
+  </script>
+</body>
+</html>

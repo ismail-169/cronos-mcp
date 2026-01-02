@@ -1,0 +1,4067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation | CronosMCP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cyan: #22d3ee;
+      --purple: #8B5CF6;
+      --orange: #f59e0b;
+      --green: #22c55e;
+      --navy: #0a0f1a;
+      --bg: #fafafa;
+      --border: #1a1a1a;
+      --text: #1a1a1a;
+      --text-muted: #6b7280;
+      --sidebar-width: 280px;
+      --toc-width: 220px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* Header */
+    .docs-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: #fff;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo img {
+      height: 32px;
+    }
+
+    .logo span {
+      font-family: 'Newsreader', serif;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-nav a {
+      padding: 8px 16px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .header-nav a:hover {
+      background: #f5f5f5;
+    }
+
+    .header-nav a.active {
+      background: var(--cyan);
+      border-color: var(--border);
+      box-shadow: 3px 3px 0 var(--border);
+    }
+
+    .search-container {
+      position: relative;
+      width: 320px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      box-shadow: 3px 3px 0 #e5e5e5;
+      transition: all 0.15s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 4px 4px 0 var(--cyan);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-shortcut {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .github-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 3px 3px 0 var(--border);
+      transition: all 0.15s ease;
+    }
+
+    .github-link:hover {
+      box-shadow: 5px 5px 0 var(--border);
+      transform: translate(-2px, -2px);
+    }
+
+    /* Layout */
+    .docs-layout {
+      display: flex;
+      padding-top: 64px;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      width: var(--sidebar-width);
+      height: calc(100vh - 64px);
+      background: #fff;
+      border-right: 2px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 0;
+    }
+
+    .sidebar-section {
+      margin-bottom: 8px;
+    }
+
+    .sidebar-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sidebar-title:hover {
+      background: #f5f5f5;
+    }
+
+    .sidebar-title svg {
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar-title.collapsed svg {
+      transform: rotate(-90deg);
+    }
+
+    .sidebar-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cyan);
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      font-size: 10px;
+    }
+
+    .sidebar-icon.purple { background: var(--purple); }
+    .sidebar-icon.orange { background: var(--orange); }
+    .sidebar-icon.green { background: var(--green); }
+
+    .sidebar-links {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-links.collapsed {
+      display: none;
+    }
+
+    .sidebar-link {
+      display: block;
+      padding: 8px 24px 8px 52px;
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.15s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-link:hover {
+      color: var(--text);
+      background: #f5f5f5;
+    }
+
+    .sidebar-link.active {
+      color: var(--text);
+      background: #f0f9ff;
+      border-left-color: var(--cyan);
+      font-weight: 500;
+    }
+
+    .sidebar-sublink {
+      padding-left: 68px;
+      font-size: 13px;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      margin-right: var(--toc-width);
+      flex: 1;
+      padding: 40px 60px;
+      max-width: calc(100% - var(--sidebar-width) - var(--toc-width));
+    }
+
+    /* Table of Contents */
+    .toc {
+      position: fixed;
+      top: 64px;
+      right: 0;
+      width: var(--toc-width);
+      height: calc(100vh - 64px);
+      padding: 24px 20px;
+      overflow-y: auto;
+      border-left: 2px solid var(--border);
+      background: #fff;
+    }
+
+    .toc-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      padding-left: 12px;
+      margin-left: -2px;
+      transition: all 0.15s ease;
+    }
+
+    .toc-link:hover {
+      color: var(--text);
+    }
+
+    .toc-link.active {
+      color: var(--cyan);
+      border-left-color: var(--cyan);
+      font-weight: 500;
+    }
+
+    .toc-link.sub {
+      padding-left: 24px;
+      font-size: 12px;
+    }
+
+    /* Content Styles */
+    .doc-section {
+      margin-bottom: 48px;
+    }
+
+    h1 {
+      font-family: 'Newsreader', serif;
+      font-size: 36px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-family: 'Newsreader', serif;
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 48px;
+      margin-bottom: 16px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e5e5;
+      color: var(--text);
+    }
+
+    h2:first-of-type {
+      margin-top: 32px;
+      border-top: none;
+      padding-top: 0;
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* Code Blocks */
+    .code-block {
+      position: relative;
+      margin: 20px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--navy);
+      box-shadow: 4px 4px 0 var(--purple);
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .code-lang {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-lang svg {
+      opacity: 0.6;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .code-content {
+      padding: 16px 20px;
+      overflow-x: auto;
+    }
+
+    .code-content pre {
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e5e5e5;
+    }
+
+    .code-content code {
+      font-family: inherit;
+    }
+
+    /* Syntax Highlighting */
+    .token-keyword { color: #c792ea; }
+    .token-string { color: #c3e88d; }
+    .token-number { color: #f78c6c; }
+    .token-comment { color: #6b7280; }
+    .token-function { color: #82aaff; }
+    .token-property { color: #f07178; }
+    .token-operator { color: #89ddff; }
+    .token-class { color: #ffcb6b; }
+
+    /* Inline Code */
+    code:not(pre code) {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #e11d48;
+    }
+
+    /* Tables */
+    .table-container {
+      margin: 20px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 4px 4px 0 var(--cyan);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: #f5f5f5;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #fafafa;
+    }
+
+    .method-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .method-get {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .method-post {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .method-put {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .method-delete {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .price-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .price-badge.free {
+      background: #f5f5f5;
+      color: var(--text-muted);
+      border-color: #e5e5e5;
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      gap: 12px;
+    }
+
+    .callout-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .callout-info {
+      background: #eff6ff;
+      box-shadow: 4px 4px 0 var(--cyan);
+    }
+
+    .callout-info .callout-icon {
+      background: var(--cyan);
+    }
+
+    .callout-warning {
+      background: #fffbeb;
+      box-shadow: 4px 4px 0 var(--orange);
+    }
+
+    .callout-warning .callout-icon {
+      background: var(--orange);
+    }
+
+    .callout-success {
+      background: #f0fdf4;
+      box-shadow: 4px 4px 0 var(--green);
+    }
+
+    .callout-success .callout-icon {
+      background: var(--green);
+    }
+
+    .callout-content {
+      flex: 1;
+    }
+
+    .callout-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .callout-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* API Playground */
+    .playground {
+      margin: 32px 0;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 6px 6px 0 var(--purple);
+      overflow: hidden;
+    }
+
+    .playground-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #f5f5f5;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .playground-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .playground-badge {
+      background: var(--purple);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .playground-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .playground-request {
+      padding: 20px;
+      border-right: 2px solid var(--border);
+    }
+
+    .playground-response {
+      padding: 20px;
+      background: var(--navy);
+    }
+
+    .playground-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .playground-response .playground-label {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .endpoint-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .method-select {
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .endpoint-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      background: #fff;
+    }
+
+    .endpoint-input:focus,
+    .method-select:focus {
+      outline: none;
+      box-shadow: 3px 3px 0 var(--cyan);
+    }
+
+    .send-btn {
+      padding: 10px 20px;
+      background: var(--cyan);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--border);
+      transition: all 0.15s ease;
+    }
+
+    .send-btn:hover {
+      box-shadow: 5px 5px 0 var(--border);
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn:active {
+      box-shadow: 1px 1px 0 var(--border);
+      transform: translate(1px, 1px);
+    }
+
+    .params-section {
+      margin-top: 16px;
+    }
+
+    .param-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .param-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 2px solid #e5e5e5;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .param-input:focus {
+      outline: none;
+      border-color: var(--border);
+    }
+
+    .param-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .add-param-btn {
+      padding: 8px 12px;
+      background: #f5f5f5;
+      border: 2px dashed #e5e5e5;
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    .add-param-btn:hover {
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .response-output {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #e5e5e5;
+      white-space: pre-wrap;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .response-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .response-status {
+      color: var(--green);
+    }
+
+    .response-status.error {
+      color: #f87171;
+    }
+
+    .response-time {
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    /* Links */
+    a {
+      color: var(--purple);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tabs */
+    .tabs {
+      margin: 20px 0;
+    }
+
+    .tab-headers {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab-header {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: #f5f5f5;
+      border: 2px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      margin-right: -2px;
+      margin-bottom: -2px;
+      transition: all 0.15s ease;
+    }
+
+    .tab-header:hover {
+      color: var(--text);
+    }
+
+    .tab-header.active {
+      background: #fff;
+      color: var(--text);
+      position: relative;
+    }
+
+    .tab-header.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #fff;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px 0;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Step Lists */
+    .steps {
+      counter-reset: step;
+      margin: 24px 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 32px;
+      height: 32px;
+      background: var(--cyan);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 3px 3px 0 var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .step-content {
+      flex: 1;
+      padding-top: 4px;
+    }
+
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Network Config Cards */
+    .network-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .network-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      background: #fff;
+    }
+
+    .network-card.testnet {
+      box-shadow: 6px 6px 0 var(--orange);
+    }
+
+    .network-card.mainnet {
+      box-shadow: 6px 6px 0 var(--green);
+    }
+
+    .network-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .network-badge {
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+    }
+
+    .network-badge.testnet {
+      background: var(--orange);
+    }
+
+    .network-badge.mainnet {
+      background: var(--green);
+    }
+
+    .network-card-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .network-config-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .network-config-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 14px;
+    }
+
+    .network-config-list li:last-child {
+      border-bottom: none;
+    }
+
+    .config-key {
+      color: var(--text-muted);
+    }
+
+    .config-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f5f5f5;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .toc {
+        display: none;
+      }
+
+      .main-content {
+        margin-right: 0;
+        max-width: calc(100% - var(--sidebar-width));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 24px;
+      }
+
+      .playground-body {
+        grid-template-columns: 1fr;
+      }
+
+      .playground-request {
+        border-right: none;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .network-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .search-container {
+        display: none;
+      }
+    }
+
+    /* Gasless Transfer Button */
+    .gasless-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 3px 3px 0 var(--border);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gasless-btn:hover {
+      box-shadow: 4px 4px 0 var(--border);
+      transform: translate(-1px, -1px);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 15, 26, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .transfer-modal {
+      background: #fff;
+      border: 3px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 8px 8px 0 var(--border);
+      width: 100%;
+      max-width: 420px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      background: var(--navy);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 13px 13px 0 0;
+    }
+
+    .modal-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .modal-title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-subtitle {
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .gasless-badge {
+      background: var(--green);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 2px solid var(--border);
+    }
+
+    .modal-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+      opacity: 0.7;
+    }
+
+    .modal-close:hover {
+      opacity: 1;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .network-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .network-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .network-btn.active {
+      background: var(--cyan);
+      box-shadow: 3px 3px 0 var(--border);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+    }
+
+    .input-field:focus {
+      outline: none;
+      box-shadow: 4px 4px 0 var(--cyan);
+    }
+
+    .amount-input-wrapper {
+      position: relative;
+    }
+
+    .amount-input-wrapper .input-field {
+      padding-right: 80px;
+    }
+
+    .amount-suffix {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .quick-amounts {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-amount {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid #e5e5e5;
+      border-radius: 6px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .quick-amount:hover {
+      border-color: var(--purple);
+      background: #f5f0ff;
+    }
+
+    .wallet-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #f5f5f5;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .wallet-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border-radius: 50%;
+      border: 2px solid var(--border);
+    }
+
+    .wallet-info {
+      flex: 1;
+    }
+
+    .wallet-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .wallet-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .wallet-balance {
+      text-align: right;
+    }
+
+    .balance-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .balance-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .disconnect-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .connect-wallet-btn, .send-btn {
+      width: 100%;
+      padding: 16px;
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .connect-wallet-btn {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--border);
+    }
+
+    .connect-wallet-btn:hover {
+      box-shadow: 7px 7px 0 var(--border);
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--border);
+    }
+
+    .send-btn:hover:not(:disabled) {
+      box-shadow: 7px 7px 0 var(--border);
+      transform: translate(-2px, -2px);
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .info-box {
+      background: #f0f9ff;
+      border: 2px solid var(--cyan);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .info-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .tx-status {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 10px;
+      border: 2px solid;
+    }
+
+    .tx-status.pending { background: #fffbeb; border-color: var(--orange); }
+    .tx-status.success { background: #f0fdf4; border-color: var(--green); }
+    .tx-status.error { background: #fef2f2; border-color: #ef4444; }
+
+    .tx-status-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tx-hash {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    .tx-hash a { color: var(--purple); }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e5e5e5;
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-footer {
+      text-align: center;
+      padding: 16px;
+      border-top: 2px solid #e5e5e5;
+      background: #fafafa;
+      border-radius: 0 0 13px 13px;
+    }
+
+    .modal-footer-text {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .modal-footer-text a {
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="docs-header">
+    <div class="header-left">
+      <a href="index.html" class="logo">
+        <img src="cronos_mcp.webp" alt="CronosMCP">
+        <span>CronosMCP</span>
+      </a>
+      <nav class="header-nav">
+        <a href="docs.html" class="active">Documentation</a>
+        <a href="registry.html">Explorer</a>
+        <a href="register.html">Register</a>
+      </nav>
+    </div>
+    <div class="search-container">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input type="text" class="search-input" placeholder="Search documentation...">
+      <span class="search-shortcut">Ctrl K</span>
+    </div>
+    <div class="header-right">
+      <button class="gasless-btn" onclick="openTransferModal()">
+        ⛽ Gasless Transfer
+      </button>
+      <a href="https://github.com/AceReeve/cronos-mcp" class="github-link" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <div class="docs-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+          </span>
+          Getting Started
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#introduction" class="sidebar-link active">Introduction</a>
+          <a href="#quick-start" class="sidebar-link">Quick Start</a>
+          <a href="#installation" class="sidebar-link">Installation</a>
+          <a href="#concepts" class="sidebar-link">Core Concepts</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon purple">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M20 7h-9"></path>
+              <path d="M14 17H5"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
+            </svg>
+          </span>
+          Server SDK
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#server-overview" class="sidebar-link">Overview</a>
+          <a href="#creating-server" class="sidebar-link">Creating a Server</a>
+          <a href="#defining-tools" class="sidebar-link">Defining Tools</a>
+          <a href="#pricing-tools" class="sidebar-link">Pricing Tools</a>
+          <a href="#server-endpoints" class="sidebar-link">Server Endpoints</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon orange">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </span>
+          Client SDK
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#client-overview" class="sidebar-link">Overview</a>
+          <a href="#wallet-setup" class="sidebar-link">Wallet Setup</a>
+          <a href="#calling-tools" class="sidebar-link">Calling Tools</a>
+          <a href="#handling-payments" class="sidebar-link">Handling Payments</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon green">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+          </span>
+          Payment Handler
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#payment-flow" class="sidebar-link">Payment Flow</a>
+          <a href="#x402-protocol" class="sidebar-link">x402 Protocol</a>
+          <a href="#eip712-signing" class="sidebar-link">EIP-712 Signing</a>
+          <a href="#facilitator-api" class="sidebar-link">Facilitator API</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"></path>
+            </svg>
+          </span>
+          Registry API
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#registry-overview" class="sidebar-link">Overview</a>
+          <a href="#registration" class="sidebar-link">Server Registration</a>
+          <a href="#discovery" class="sidebar-link">Tool Discovery</a>
+          <a href="#registry-endpoints" class="sidebar-link">API Endpoints</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon" style="background: #ec4899;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M3 3v18h18"></path>
+              <path d="m19 9-5 5-4-4-3 3"></path>
+            </svg>
+          </span>
+          Market Data API
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#market-data-overview" class="sidebar-link">Overview</a>
+          <a href="#get-price" class="sidebar-link">Get Price</a>
+          <a href="#get-ohlcv" class="sidebar-link">Get OHLCV</a>
+          <a href="#get-orderbook" class="sidebar-link">Get Order Book</a>
+          <a href="#get-trades" class="sidebar-link">Get Trades</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon" style="background: #14b8a6;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </span>
+          Onchain Analytics API
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#onchain-overview" class="sidebar-link">Overview</a>
+          <a href="#get-balance" class="sidebar-link">Get Balance</a>
+          <a href="#get-token-balance" class="sidebar-link">Get Token Balance</a>
+          <a href="#get-transactions" class="sidebar-link">Get Transactions</a>
+          <a href="#get-contract-info" class="sidebar-link">Get Contract Info</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M12 2v20M2 12h20"></path>
+            </svg>
+          </span>
+          Features
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#gasless-widget" class="sidebar-link">Gasless Transfer Widget</a>
+          <a href="#dashboard" class="sidebar-link">Payment Dashboard</a>
+          <a href="#deployment" class="sidebar-link">Deployment</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title" onclick="toggleSection(this)">
+          <span class="sidebar-icon purple">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </span>
+          Reference
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
+        <div class="sidebar-links">
+          <a href="#network-config" class="sidebar-link">Network Configuration</a>
+          <a href="#type-definitions" class="sidebar-link">Type Definitions</a>
+          <a href="#error-codes" class="sidebar-link">Error Codes</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Introduction -->
+      <section id="introduction" class="doc-section">
+        <h1>CronosMCP Documentation</h1>
+        <p class="lead">Build and monetize AI-powered tools with seamless micropayments on the Cronos blockchain.</p>
+
+        <p>CronosMCP is a comprehensive platform for AI-native payments on Cronos. We provide the infrastructure for AI agents to autonomously pay for premium tools using the x402 payment protocol, a discovery platform for the Cronos x402 ecosystem, and our own suite of premium APIs for market data and blockchain analytics.</p>
+
+        <h3>What We Offer</h3>
+        <ul>
+          <li><strong>Developer SDK</strong>: Build and monetize your own paid tools with our TypeScript packages</li>
+          <li><strong>Gasless Transfer Widget</strong>: Embed gasless USDC.e transfers in your website</li>
+          <li><strong>x402 Explorer</strong>: Discover and browse all x402-enabled tools and services on Cronos</li>
+          <li><strong>Market Data API</strong>: Real-time cryptocurrency prices, OHLCV data, order books, and trades</li>
+          <li><strong>Onchain Analytics API</strong>: Wallet balances, token holdings, transactions, and contract data</li>
+        </ul>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">What is x402?</div>
+            <p class="callout-text">x402 is a payment protocol that uses HTTP 402 status codes to handle micropayments. When a client requests a paid resource without payment, the server responds with payment requirements. The client then signs a payment authorization and retries the request.</p>
+          </div>
+        </div>
+
+        <h3>Platform Features</h3>
+        <ul>
+          <li><strong>Micropayments</strong>: Enable payments as low as $0.001 with minimal gas fees on Cronos</li>
+          <li><strong>AI-Native</strong>: Built for autonomous AI agents using the Model Context Protocol (MCP)</li>
+          <li><strong>Flexible Pricing</strong>: Set custom prices per tool, from free to any amount</li>
+          <li><strong>On-Chain Settlement</strong>: All payments settled on Cronos blockchain using USDC.e</li>
+          <li><strong>Registry Discovery</strong>: Central registry for discovering available tools and services</li>
+        </ul>
+
+        <h2 id="quick-start">Quick Start</h2>
+        <p>Get started with CronosMCP in three steps:</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-content">
+              <div class="step-title">Install the SDK</div>
+              <p>Add the CronosMCP packages to your project.</p>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m4 17 6-6-6-6"></path>
+                      <path d="M12 19h8"></path>
+                    </svg>
+                    bash
+                  </span>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="code-content">
+                  <pre><code>npm install @cronos-mcp/server-sdk @cronos-mcp/core</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-content">
+              <div class="step-title">Create a Server</div>
+              <p>Define your tools and their pricing.</p>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m4 17 6-6-6-6"></path>
+                      <path d="M12 19h8"></path>
+                    </svg>
+                    typescript
+                  </span>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="code-content">
+                  <pre><code><span class="token-keyword">import</span> { createServer } <span class="token-keyword">from</span> <span class="token-string">'@cronos-mcp/server-sdk'</span>;
+
+<span class="token-keyword">const</span> server = <span class="token-function">createServer</span>({
+  <span class="token-property">name</span>: <span class="token-string">'my-tool-server'</span>,
+  <span class="token-property">version</span>: <span class="token-string">'1.0.0'</span>,
+  <span class="token-property">network</span>: <span class="token-string">'mainnet'</span>,
+  <span class="token-property">payTo</span>: <span class="token-string">'0xYourWalletAddress'</span>,
+});
+
+server.<span class="token-function">addTool</span>({
+  <span class="token-property">name</span>: <span class="token-string">'analyze_data'</span>,
+  <span class="token-property">description</span>: <span class="token-string">'Analyze data and return insights'</span>,
+  <span class="token-property">price</span>: <span class="token-string">'1000'</span>, <span class="token-comment">// $0.001 in atomic units</span>
+  <span class="token-property">handler</span>: <span class="token-keyword">async</span> (params) => {
+    <span class="token-keyword">return</span> { <span class="token-property">result</span>: <span class="token-string">'Analysis complete'</span> };
+  }
+});
+
+server.<span class="token-function">start</span>(<span class="token-number">3001</span>);</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-content">
+              <div class="step-title">Register with the Explorer</div>
+              <p>Make your tools discoverable by registering with the CronosMCP Registry.</p>
+              <div class="code-block">
+                <div class="code-header">
+                  <span class="code-lang">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m4 17 6-6-6-6"></path>
+                      <path d="M12 19h8"></path>
+                    </svg>
+                    typescript
+                  </span>
+                  <button class="copy-btn" onclick="copyCode(this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="code-content">
+                  <pre><code><span class="token-comment">// Auto-registration happens on server start</span>
+server.<span class="token-function">start</span>(<span class="token-number">3001</span>, {
+  <span class="token-property">registryUrl</span>: <span class="token-string">'https://registry.cronosmcp.xyz'</span>,
+  <span class="token-property">projectName</span>: <span class="token-string">'My Project'</span>
+});</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 id="installation">Installation</h2>
+        <p>CronosMCP is available as a collection of npm packages. Install the packages you need based on your use case:</p>
+
+        <h4>For Tool Providers (Servers)</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>npm install @cronos-mcp/server-sdk @cronos-mcp/core</code></pre>
+          </div>
+        </div>
+
+        <h4>For AI Agents (Clients)</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>npm install @cronos-mcp/client-sdk @cronos-mcp/core</code></pre>
+          </div>
+        </div>
+
+        <h4>All Packages</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>@cronos-mcp/core</code></td>
+                <td>Types, constants, and network configuration</td>
+              </tr>
+              <tr>
+                <td><code>@cronos-mcp/server-sdk</code></td>
+                <td>SDK for building paid tool servers</td>
+              </tr>
+              <tr>
+                <td><code>@cronos-mcp/client-sdk</code></td>
+                <td>SDK for AI agents to call and pay for tools</td>
+              </tr>
+              <tr>
+                <td><code>@cronos-mcp/payment-handler</code></td>
+                <td>x402 payment verification and settlement</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="concepts">Core Concepts</h2>
+
+        <h3>Payment Flow</h3>
+        <p>CronosMCP uses the x402 protocol to handle payments. Here is how a typical payment flow works:</p>
+
+        <ol>
+          <li>Client requests a paid tool without a payment header</li>
+          <li>Server responds with HTTP 402 and payment requirements in the <code>X-Payment</code> header</li>
+          <li>Client signs an EIP-712 TransferWithAuthorization message</li>
+          <li>Client retries the request with the signed payment header</li>
+          <li>Server verifies the signature with the Cronos Facilitator</li>
+          <li>Server settles the payment on-chain</li>
+          <li>Server returns the tool result with the transaction hash</li>
+        </ol>
+
+        <h3>Network Support</h3>
+        <p>CronosMCP supports both Cronos testnet and mainnet:</p>
+
+        <div class="network-cards">
+          <div class="network-card testnet">
+            <div class="network-card-header">
+              <span class="network-badge testnet">Testnet</span>
+              <span class="network-card-title">Cronos Testnet</span>
+            </div>
+            <ul class="network-config-list">
+              <li><span class="config-key">Network ID</span><span class="config-value">cronos-testnet</span></li>
+              <li><span class="config-key">Chain ID</span><span class="config-value">338</span></li>
+              <li><span class="config-key">Token</span><span class="config-value">devUSDC.e</span></li>
+              <li><span class="config-key">Use Case</span><span class="config-value">Development & Testing</span></li>
+            </ul>
+          </div>
+          <div class="network-card mainnet">
+            <div class="network-card-header">
+              <span class="network-badge mainnet">Mainnet</span>
+              <span class="network-card-title">Cronos Mainnet</span>
+            </div>
+            <ul class="network-config-list">
+              <li><span class="config-key">Network ID</span><span class="config-value">cronos-mainnet</span></li>
+              <li><span class="config-key">Chain ID</span><span class="config-value">25</span></li>
+              <li><span class="config-key">Token</span><span class="config-value">USDC.e</span></li>
+              <li><span class="config-key">Use Case</span><span class="config-value">Production</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Server SDK -->
+      <section id="server-overview" class="doc-section">
+        <h2>Server SDK</h2>
+        <p>The Server SDK enables you to create HTTP servers that expose paid tools. It handles payment verification, settlement, and provides standard endpoints for tool discovery.</p>
+
+        <h3 id="creating-server">Creating a Server</h3>
+        <p>Use the <code>createServer</code> function to initialize your server with configuration:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-keyword">import</span> { createServer } <span class="token-keyword">from</span> <span class="token-string">'@cronos-mcp/server-sdk'</span>;
+
+<span class="token-keyword">const</span> server = <span class="token-function">createServer</span>({
+  <span class="token-property">name</span>: <span class="token-string">'market-data-server'</span>,
+  <span class="token-property">version</span>: <span class="token-string">'1.0.0'</span>,
+  <span class="token-property">description</span>: <span class="token-string">'Real-time cryptocurrency market data'</span>,
+  <span class="token-property">network</span>: process.env.NETWORK || <span class="token-string">'testnet'</span>,
+  <span class="token-property">payTo</span>: process.env.WALLET_ADDRESS,
+});</code></pre>
+          </div>
+        </div>
+
+        <h4>Configuration Options</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td>Unique identifier for your server</td>
+              </tr>
+              <tr>
+                <td><code>version</code></td>
+                <td>string</td>
+                <td>Semantic version of your server</td>
+              </tr>
+              <tr>
+                <td><code>description</code></td>
+                <td>string</td>
+                <td>Human-readable description</td>
+              </tr>
+              <tr>
+                <td><code>network</code></td>
+                <td>"testnet" | "mainnet"</td>
+                <td>Target Cronos network</td>
+              </tr>
+              <tr>
+                <td><code>payTo</code></td>
+                <td>string</td>
+                <td>Wallet address to receive payments</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="defining-tools">Defining Tools</h3>
+        <p>Add tools to your server using the <code>addTool</code> method:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>server.<span class="token-function">addTool</span>({
+  <span class="token-property">name</span>: <span class="token-string">'get_price'</span>,
+  <span class="token-property">description</span>: <span class="token-string">'Get current price for a trading pair'</span>,
+  <span class="token-property">price</span>: <span class="token-string">'0'</span>, <span class="token-comment">// Free tool</span>
+  <span class="token-property">inputSchema</span>: {
+    <span class="token-property">type</span>: <span class="token-string">'object'</span>,
+    <span class="token-property">properties</span>: {
+      <span class="token-property">symbol</span>: { <span class="token-property">type</span>: <span class="token-string">'string'</span>, <span class="token-property">description</span>: <span class="token-string">'Trading pair (e.g., BTC_USD)'</span> }
+    },
+    <span class="token-property">required</span>: [<span class="token-string">'symbol'</span>]
+  },
+  <span class="token-property">handler</span>: <span class="token-keyword">async</span> (params) => {
+    <span class="token-keyword">const</span> price = <span class="token-keyword">await</span> <span class="token-function">fetchPrice</span>(params.symbol);
+    <span class="token-keyword">return</span> { price };
+  }
+});
+
+server.<span class="token-function">addTool</span>({
+  <span class="token-property">name</span>: <span class="token-string">'get_ohlcv'</span>,
+  <span class="token-property">description</span>: <span class="token-string">'Get OHLCV candlestick data'</span>,
+  <span class="token-property">price</span>: <span class="token-string">'1000'</span>, <span class="token-comment">// $0.001 (1000 atomic units)</span>
+  <span class="token-property">inputSchema</span>: {
+    <span class="token-property">type</span>: <span class="token-string">'object'</span>,
+    <span class="token-property">properties</span>: {
+      <span class="token-property">symbol</span>: { <span class="token-property">type</span>: <span class="token-string">'string'</span> },
+      <span class="token-property">interval</span>: { <span class="token-property">type</span>: <span class="token-string">'string'</span>, <span class="token-property">enum</span>: [<span class="token-string">'1m'</span>, <span class="token-string">'5m'</span>, <span class="token-string">'1h'</span>, <span class="token-string">'1d'</span>] },
+      <span class="token-property">limit</span>: { <span class="token-property">type</span>: <span class="token-string">'number'</span>, <span class="token-property">default</span>: <span class="token-number">100</span> }
+    },
+    <span class="token-property">required</span>: [<span class="token-string">'symbol'</span>]
+  },
+  <span class="token-property">handler</span>: <span class="token-keyword">async</span> (params) => {
+    <span class="token-keyword">const</span> data = <span class="token-keyword">await</span> <span class="token-function">fetchOHLCV</span>(params);
+    <span class="token-keyword">return</span> { candles: data };
+  }
+});</code></pre>
+          </div>
+        </div>
+
+        <h3 id="pricing-tools">Pricing Tools</h3>
+        <p>Prices are specified in atomic units of USDC.e (6 decimals). Here are common price points:</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>USD Amount</th>
+                <th>Atomic Units</th>
+                <th>Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Free</td>
+                <td>0</td>
+                <td><code>price: '0'</code></td>
+              </tr>
+              <tr>
+                <td>$0.001</td>
+                <td>1,000</td>
+                <td><code>price: '1000'</code></td>
+              </tr>
+              <tr>
+                <td>$0.01</td>
+                <td>10,000</td>
+                <td><code>price: '10000'</code></td>
+              </tr>
+              <tr>
+                <td>$0.10</td>
+                <td>100,000</td>
+                <td><code>price: '100000'</code></td>
+              </tr>
+              <tr>
+                <td>$1.00</td>
+                <td>1,000,000</td>
+                <td><code>price: '1000000'</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+              <path d="M12 9v4"></path>
+              <path d="M12 17h.01"></path>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">Price Format</div>
+            <p class="callout-text">Always specify prices as strings to avoid JavaScript number precision issues with large values.</p>
+          </div>
+        </div>
+
+        <h3 id="server-endpoints">Server Endpoints</h3>
+        <p>The Server SDK automatically exposes these endpoints:</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td class="endpoint-path">/health</td>
+                <td>Health check endpoint</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td class="endpoint-path">/info</td>
+                <td>Server metadata and configuration</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td class="endpoint-path">/tools</td>
+                <td>List all available tools with pricing</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td class="endpoint-path">/stats</td>
+                <td>Server statistics for dashboard</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-post">POST</span></td>
+                <td class="endpoint-path">/tools/:name</td>
+                <td>Execute a specific tool</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Client SDK -->
+      <section id="client-overview" class="doc-section">
+        <h2>Client SDK</h2>
+        <p>The Client SDK enables AI agents and applications to discover, call, and pay for tools seamlessly.</p>
+
+        <h3 id="wallet-setup">Wallet Setup</h3>
+        <p>Initialize a client with your wallet credentials:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-keyword">import</span> { CronosMCPClient } <span class="token-keyword">from</span> <span class="token-string">'@cronos-mcp/client-sdk'</span>;
+
+<span class="token-keyword">const</span> client = <span class="token-keyword">new</span> <span class="token-class">CronosMCPClient</span>({
+  <span class="token-property">network</span>: <span class="token-string">'mainnet'</span>,
+  <span class="token-property">privateKey</span>: process.env.WALLET_PRIVATE_KEY,
+  <span class="token-property">maxBudget</span>: <span class="token-string">'100000'</span>, <span class="token-comment">// $0.10 max per call</span>
+});</code></pre>
+          </div>
+        </div>
+
+        <h3 id="calling-tools">Calling Tools</h3>
+        <p>Call a tool on a remote server:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-keyword">const</span> result = <span class="token-keyword">await</span> client.<span class="token-function">callTool</span>({
+  <span class="token-property">serverUrl</span>: <span class="token-string">'https://market-data.example.com'</span>,
+  <span class="token-property">tool</span>: <span class="token-string">'get_ohlcv'</span>,
+  <span class="token-property">params</span>: {
+    <span class="token-property">symbol</span>: <span class="token-string">'BTC_USD'</span>,
+    <span class="token-property">interval</span>: <span class="token-string">'1h'</span>,
+    <span class="token-property">limit</span>: <span class="token-number">24</span>
+  }
+});
+
+console.<span class="token-function">log</span>(result.data);    <span class="token-comment">// Tool response</span>
+console.<span class="token-function">log</span>(result.txHash);  <span class="token-comment">// Payment transaction hash</span></code></pre>
+          </div>
+        </div>
+
+        <h3 id="handling-payments">Handling Payments</h3>
+        <p>The client automatically handles the x402 payment flow. When a tool requires payment:</p>
+
+        <ol>
+          <li>Client checks if the price is within budget</li>
+          <li>Client signs the payment authorization</li>
+          <li>Client retries the request with payment</li>
+          <li>Client returns the result with transaction details</li>
+        </ol>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-keyword">try</span> {
+  <span class="token-keyword">const</span> result = <span class="token-keyword">await</span> client.<span class="token-function">callTool</span>({
+    <span class="token-property">serverUrl</span>: <span class="token-string">'https://api.example.com'</span>,
+    <span class="token-property">tool</span>: <span class="token-string">'expensive_analysis'</span>,
+    <span class="token-property">params</span>: { <span class="token-property">data</span>: <span class="token-string">'...'</span> }
+  });
+  
+  <span class="token-keyword">if</span> (result.paid) {
+    console.<span class="token-function">log</span>(<span class="token-string">`Paid ${result.amount} USDC.e`</span>);
+    console.<span class="token-function">log</span>(<span class="token-string">`Tx: ${result.txHash}`</span>);
+  }
+} <span class="token-keyword">catch</span> (error) {
+  <span class="token-keyword">if</span> (error.code === <span class="token-string">'BUDGET_EXCEEDED'</span>) {
+    console.<span class="token-function">log</span>(<span class="token-string">'Tool price exceeds budget'</span>);
+  }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment Handler -->
+      <section id="payment-flow" class="doc-section">
+        <h2>Payment Handler</h2>
+        <p>The Payment Handler manages x402 payment verification and settlement with the Cronos Facilitator.</p>
+
+        <h3 id="x402-protocol">x402 Protocol</h3>
+        <p>The x402 protocol uses HTTP 402 Payment Required responses to negotiate payments:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">http</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment"># Initial request (no payment)</span>
+POST /tools/get_ohlcv HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+
+{"symbol": "BTC_USD"}
+
+<span class="token-comment"># Server response (402)</span>
+HTTP/1.1 402 Payment Required
+X-Payment: eyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcmsiOiJjcm9ub3MtbWFpbm5ldCIuLi59
+
+<span class="token-comment"># Retry with payment header</span>
+POST /tools/get_ohlcv HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+X-Payment: eyJ4NDAyVmVyc2lvbiI6MSwic2NoZW1lIjoiZXhhY3QiLi4ufQ==
+
+{"symbol": "BTC_USD"}
+
+<span class="token-comment"># Success response</span>
+HTTP/1.1 200 OK
+X-Payment-Response: eyJ0eEhhc2giOiIweDEyMzQuLi4ifQ==
+
+{"candles": [...]}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="eip712-signing">EIP-712 Signing</h3>
+        <p>Payments are authorized using EIP-712 typed signatures for TransferWithAuthorization:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment">// ⚠️ CRITICAL: Domain params must be EXACT or signature fails!</span>
+<span class="token-keyword">const</span> domain = {
+  <span class="token-property">name</span>: <span class="token-string">'Bridged USDC (Stargate)'</span>,  <span class="token-comment">// ✅ EXACT - not 'USD Coin'!</span>
+  <span class="token-property">version</span>: <span class="token-string">'1'</span>,                      <span class="token-comment">// ✅ Must be '1', not '2'</span>
+  <span class="token-property">chainId</span>: <span class="token-number">25</span>,                       <span class="token-comment">// Cronos mainnet (338 for testnet)</span>
+  <span class="token-property">verifyingContract</span>: <span class="token-string">'0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C'</span>
+};
+
+<span class="token-keyword">const</span> types = {
+  <span class="token-property">TransferWithAuthorization</span>: [
+    { <span class="token-property">name</span>: <span class="token-string">'from'</span>, <span class="token-property">type</span>: <span class="token-string">'address'</span> },
+    { <span class="token-property">name</span>: <span class="token-string">'to'</span>, <span class="token-property">type</span>: <span class="token-string">'address'</span> },
+    { <span class="token-property">name</span>: <span class="token-string">'value'</span>, <span class="token-property">type</span>: <span class="token-string">'uint256'</span> },
+    { <span class="token-property">name</span>: <span class="token-string">'validAfter'</span>, <span class="token-property">type</span>: <span class="token-string">'uint256'</span> },
+    { <span class="token-property">name</span>: <span class="token-string">'validBefore'</span>, <span class="token-property">type</span>: <span class="token-string">'uint256'</span> },
+    { <span class="token-property">name</span>: <span class="token-string">'nonce'</span>, <span class="token-property">type</span>: <span class="token-string">'bytes32'</span> }
+  ]
+};
+
+<span class="token-keyword">const</span> message = {
+  <span class="token-property">from</span>: <span class="token-string">'0xPayerAddress'</span>,
+  <span class="token-property">to</span>: <span class="token-string">'0xServerAddress'</span>,
+  <span class="token-property">value</span>: <span class="token-string">'1000'</span>,
+  <span class="token-property">validAfter</span>: <span class="token-number">0</span>,
+  <span class="token-property">validBefore</span>: Math.<span class="token-function">floor</span>(Date.<span class="token-function">now</span>() / <span class="token-number">1000</span>) + <span class="token-number">300</span>,
+  <span class="token-property">nonce</span>: <span class="token-string">'0x...'</span> <span class="token-comment">// Random 32 bytes</span>
+};</code></pre>
+          </div>
+        </div>
+
+        <h3 id="facilitator-api">Facilitator API</h3>
+        <p>The Cronos Facilitator handles payment verification and on-chain settlement. A single URL supports both testnet and mainnet - the network is determined by the <code>network</code> field in your payment requirements.</p>
+
+        <div class="callout callout-info">
+          <span class="callout-icon">💡</span>
+          <p class="callout-text">Base URL: <code>https://facilitator.cronoslabs.org/v2/x402</code></p>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Full URL</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="endpoint-path">/healthcheck</td>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>https://facilitator.cronoslabs.org/healthcheck</code></td>
+                <td>Service health status</td>
+              </tr>
+              <tr>
+                <td class="endpoint-path">/supported</td>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>https://facilitator.cronoslabs.org/v2/x402/supported</code></td>
+                <td>List supported networks and schemes</td>
+              </tr>
+              <tr>
+                <td class="endpoint-path">/verify</td>
+                <td><span class="method-badge method-post">POST</span></td>
+                <td><code>https://facilitator.cronoslabs.org/v2/x402/verify</code></td>
+                <td>Validate payment signature</td>
+              </tr>
+              <tr>
+                <td class="endpoint-path">/settle</td>
+                <td><span class="method-badge method-post">POST</span></td>
+                <td><code>https://facilitator.cronoslabs.org/v2/x402/settle</code></td>
+                <td>Execute on-chain transfer</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-keyword">const</span> FACILITATOR_URL = <span class="token-string">'https://facilitator.cronoslabs.org/v2/x402'</span>;
+
+<span class="token-comment">// Verify payment</span>
+<span class="token-keyword">const</span> verifyResponse = <span class="token-keyword">await</span> <span class="token-function">fetch</span>(<span class="token-string">`${FACILITATOR_URL}/verify`</span>, {
+  <span class="token-property">method</span>: <span class="token-string">'POST'</span>,
+  <span class="token-property">headers</span>: { 
+    <span class="token-string">'Content-Type'</span>: <span class="token-string">'application/json'</span>,
+    <span class="token-string">'X402-Version'</span>: <span class="token-string">'1'</span>
+  },
+  <span class="token-property">body</span>: JSON.<span class="token-function">stringify</span>({
+    <span class="token-property">x402Version</span>: <span class="token-number">1</span>,
+    <span class="token-property">paymentHeader</span>: encodedPayload,
+    <span class="token-property">paymentRequirements</span>: requirements
+  })
+});
+
+<span class="token-comment">// Settle payment</span>
+<span class="token-keyword">const</span> settleResponse = <span class="token-keyword">await</span> <span class="token-function">fetch</span>(<span class="token-string">`${FACILITATOR_URL}/settle`</span>, {
+  <span class="token-property">method</span>: <span class="token-string">'POST'</span>,
+  <span class="token-property">headers</span>: { 
+    <span class="token-string">'Content-Type'</span>: <span class="token-string">'application/json'</span>,
+    <span class="token-string">'X402-Version'</span>: <span class="token-string">'1'</span>
+  },
+  <span class="token-property">body</span>: JSON.<span class="token-function">stringify</span>({
+    <span class="token-property">x402Version</span>: <span class="token-number">1</span>,
+    <span class="token-property">paymentHeader</span>: encodedPayload,
+    <span class="token-property">paymentRequirements</span>: requirements
+  })
+});
+
+<span class="token-keyword">const</span> result = <span class="token-keyword">await</span> settleResponse.<span class="token-function">json</span>();
+<span class="token-comment">// result.event === 'payment.settled' on success</span>
+<span class="token-comment">// result.txHash contains the transaction hash</span>
+<span class="token-comment">// result.network confirms which network was used</span></code></pre>
+          </div>
+        </div>
+
+        <h4>Verify Response</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment">// Success</span>
+{ <span class="token-property">"isValid"</span>: <span class="token-boolean">true</span>, <span class="token-property">"invalidReason"</span>: <span class="token-null">null</span> }
+
+<span class="token-comment">// Failure</span>
+{ <span class="token-property">"isValid"</span>: <span class="token-boolean">false</span>, <span class="token-property">"invalidReason"</span>: <span class="token-string">"Invalid EIP-3009 signature"</span> }</code></pre>
+          </div>
+        </div>
+
+        <h4>Settle Response</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment">// Success</span>
+{
+  <span class="token-property">"x402Version"</span>: <span class="token-number">1</span>,
+  <span class="token-property">"event"</span>: <span class="token-string">"payment.settled"</span>,
+  <span class="token-property">"txHash"</span>: <span class="token-string">"0xabc123..."</span>,
+  <span class="token-property">"from"</span>: <span class="token-string">"0xPayer..."</span>,
+  <span class="token-property">"to"</span>: <span class="token-string">"0xSeller..."</span>,
+  <span class="token-property">"value"</span>: <span class="token-string">"1000000"</span>,
+  <span class="token-property">"blockNumber"</span>: <span class="token-number">17352</span>,
+  <span class="token-property">"network"</span>: <span class="token-string">"cronos-mainnet"</span>,
+  <span class="token-property">"timestamp"</span>: <span class="token-string">"2025-12-30T12:00:00.000Z"</span>
+}
+
+<span class="token-comment">// Failure</span>
+{
+  <span class="token-property">"x402Version"</span>: <span class="token-number">1</span>,
+  <span class="token-property">"event"</span>: <span class="token-string">"payment.failed"</span>,
+  <span class="token-property">"network"</span>: <span class="token-string">"cronos-mainnet"</span>,
+  <span class="token-property">"error"</span>: <span class="token-string">"Authorization already used"</span>
+}</code></pre>
+          </div>
+        </div>
+
+        <h4>Common Error Reasons</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Error</th>
+                <th>Cause</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Invalid EIP-3009 signature</code></td>
+                <td>Wrong domain params (name/version) or signing error</td>
+              </tr>
+              <tr>
+                <td><code>Unsupported network</code></td>
+                <td>Network must be "cronos-testnet" or "cronos-mainnet"</td>
+              </tr>
+              <tr>
+                <td><code>Authorization already used</code></td>
+                <td>Duplicate nonce - transaction already executed</td>
+              </tr>
+              <tr>
+                <td><code>Authorization expired</code></td>
+                <td>validBefore timestamp has passed</td>
+              </tr>
+              <tr>
+                <td><code>ERC20: transfer amount exceeds balance</code></td>
+                <td>Insufficient USDC.e balance</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Registry API -->
+      <section id="registry-overview" class="doc-section">
+        <h2>Registry API</h2>
+        <p>The CronosMCP Registry provides centralized discovery of available tools and services. Servers can register automatically on startup or manually through the web interface.</p>
+
+        <h3 id="registration">Server Registration</h3>
+        <p>Register your server to make it discoverable:</p>
+
+        <h4>Automatic Registration</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>server.<span class="token-function">start</span>(<span class="token-number">3001</span>, {
+  <span class="token-property">registryUrl</span>: <span class="token-string">'https://registry.cronosmcp.xyz'</span>,
+  <span class="token-property">projectName</span>: <span class="token-string">'Market Data Tools'</span>,
+  <span class="token-property">ownerAddress</span>: <span class="token-string">'0xYourWalletAddress'</span>
+});</code></pre>
+          </div>
+        </div>
+
+        <h4>Manual Registration</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">http</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>POST /api/servers HTTP/1.1
+Host: registry.cronosmcp.xyz
+Content-Type: application/json
+
+{
+  "name": "market-data-server",
+  "url": "https://api.example.com",
+  "description": "Real-time crypto market data",
+  "network": "cronos-mainnet",
+  "projectName": "Market Data Tools",
+  "ownerAddress": "0xYourWalletAddress",
+  "tools": [
+    {
+      "name": "get_price",
+      "description": "Get current price",
+      "price": "0"
+    },
+    {
+      "name": "get_ohlcv",
+      "description": "Get OHLCV data",
+      "price": "1000"
+    }
+  ]
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="discovery">Tool Discovery</h3>
+        <p>Query the registry to discover available tools:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment">// List all servers</span>
+<span class="token-keyword">const</span> response = <span class="token-keyword">await</span> <span class="token-function">fetch</span>(<span class="token-string">'https://registry.cronosmcp.xyz/api/servers'</span>);
+<span class="token-keyword">const</span> servers = <span class="token-keyword">await</span> response.<span class="token-function">json</span>();
+
+<span class="token-comment">// Filter by network</span>
+<span class="token-keyword">const</span> mainnetServers = servers.<span class="token-function">filter</span>(s => s.network === <span class="token-string">'cronos-mainnet'</span>);
+
+<span class="token-comment">// Find tools by name</span>
+<span class="token-keyword">const</span> ohlcvTools = servers
+  .<span class="token-function">flatMap</span>(s => s.tools)
+  .<span class="token-function">filter</span>(t => t.name.<span class="token-function">includes</span>(<span class="token-string">'ohlcv'</span>));</code></pre>
+          </div>
+        </div>
+
+        <h3 id="registry-endpoints">API Endpoints</h3>
+
+        <!-- API Playground -->
+        <div class="playground">
+          <div class="playground-header">
+            <div class="playground-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m4 17 6-6-6-6"></path>
+                <path d="M12 19h8"></path>
+              </svg>
+              API Playground
+              <span class="playground-badge">Interactive</span>
+            </div>
+          </div>
+          <div class="playground-body">
+            <div class="playground-request">
+              <div class="playground-label">Request</div>
+              <div class="endpoint-input-group">
+                <select class="method-select" id="playground-method">
+                  <option value="GET">GET</option>
+                  <option value="POST">POST</option>
+                </select>
+                <input type="text" class="endpoint-input" id="playground-url" value="/api/servers" placeholder="/api/servers">
+                <button class="send-btn" onclick="sendRequest()">Send</button>
+              </div>
+              <div class="params-section">
+                <div class="playground-label">Query Parameters</div>
+                <div id="params-container">
+                  <div class="param-row">
+                    <input type="text" class="param-input" placeholder="Key">
+                    <input type="text" class="param-input" placeholder="Value">
+                  </div>
+                </div>
+                <button class="add-param-btn" onclick="addParam()">+ Add Parameter</button>
+              </div>
+            </div>
+            <div class="playground-response">
+              <div class="playground-label">Response</div>
+              <div class="response-meta">
+                <span class="response-status" id="response-status">200 OK</span>
+                <span class="response-time" id="response-time">142ms</span>
+              </div>
+              <div class="response-output" id="response-output">{
+  "servers": [
+    {
+      "id": "mkt-001",
+      "name": "market-data-server",
+      "url": "https://market.cronosmcp.xyz",
+      "network": "cronos-mainnet",
+      "projectName": "Market Data Tools",
+      "tools": [
+        {
+          "name": "get_price",
+          "price": "0"
+        },
+        {
+          "name": "get_ohlcv",
+          "price": "1000"
+        }
+      ]
+    }
+  ]
+}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td class="endpoint-path">/api/servers</td>
+                <td>List all registered servers</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td class="endpoint-path">/api/servers/:id</td>
+                <td>Get server details by ID</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-post">POST</span></td>
+                <td class="endpoint-path">/api/servers</td>
+                <td>Register a new server</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-put">PUT</span></td>
+                <td class="endpoint-path">/api/servers/:id</td>
+                <td>Update server registration</td>
+              </tr>
+              <tr>
+                <td><span class="method-badge method-delete">DELETE</span></td>
+                <td class="endpoint-path">/api/servers/:id</td>
+                <td>Remove server from registry</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Market Data API -->
+      <section id="market-data-overview" class="doc-section">
+        <h2>Market Data API</h2>
+        <p>CronosMCP provides a comprehensive Market Data API for accessing real-time cryptocurrency prices, historical OHLCV data, order books, and recent trades. Data is sourced from the Crypto.com Exchange.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">Base URL</div>
+            <p class="callout-text">All Market Data endpoints are available at <code>https://market.cronosmcp.xyz</code></p>
+          </div>
+        </div>
+
+        <h3>Endpoints Overview</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Description</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>get_price</code></td>
+                <td>Get current price for a trading pair</td>
+                <td><span class="price-badge free">Free</span></td>
+              </tr>
+              <tr>
+                <td><code>get_ohlcv</code></td>
+                <td>Get OHLCV candlestick data</td>
+                <td><span class="price-badge">$0.001</span></td>
+              </tr>
+              <tr>
+                <td><code>get_orderbook</code></td>
+                <td>Get order book depth</td>
+                <td><span class="price-badge">$0.002</span></td>
+              </tr>
+              <tr>
+                <td><code>get_trades</code></td>
+                <td>Get recent trades</td>
+                <td><span class="price-badge">$0.001</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="get-price">Get Price</h3>
+        <p>Retrieve the current price for a trading pair. This endpoint is free to use.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>symbol</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Trading pair (e.g., BTC_USD, ETH_USDT, CRO_USD)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://market.cronosmcp.xyz/tools/get_price \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "BTC_USD"}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "symbol": "BTC_USD",
+  "price": "94250.50",
+  "bid": "94248.00",
+  "ask": "94253.00",
+  "volume_24h": "12543.82",
+  "change_24h": "-1.25",
+  "timestamp": 1735570422428
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="get-ohlcv">Get OHLCV</h3>
+        <p>Retrieve historical OHLCV (Open, High, Low, Close, Volume) candlestick data. Requires payment of $0.001 per request.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>symbol</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Trading pair (e.g., BTC_USD)</td>
+              </tr>
+              <tr>
+                <td><code>interval</code></td>
+                <td>string</td>
+                <td>No</td>
+                <td>Candle interval: 1m, 5m, 15m, 30m, 1h, 4h, 1d (default: 1h)</td>
+              </tr>
+              <tr>
+                <td><code>limit</code></td>
+                <td>number</td>
+                <td>No</td>
+                <td>Number of candles to return (default: 100, max: 1000)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://market.cronosmcp.xyz/tools/get_ohlcv \
+  -H "Content-Type: application/json" \
+  -H "X-Payment: &lt;payment_header&gt;" \
+  -d '{"symbol": "BTC_USD", "interval": "1h", "limit": 24}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "symbol": "BTC_USD",
+  "interval": "1h",
+  "candles": [
+    {
+      "timestamp": 1735567200000,
+      "open": "94100.00",
+      "high": "94500.00",
+      "low": "94050.00",
+      "close": "94250.50",
+      "volume": "523.45"
+    },
+    ...
+  ]
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="get-orderbook">Get Order Book</h3>
+        <p>Retrieve the current order book depth for a trading pair. Requires payment of $0.002 per request.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>symbol</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Trading pair (e.g., BTC_USD)</td>
+              </tr>
+              <tr>
+                <td><code>depth</code></td>
+                <td>number</td>
+                <td>No</td>
+                <td>Number of price levels (default: 20, max: 100)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://market.cronosmcp.xyz/tools/get_orderbook \
+  -H "Content-Type: application/json" \
+  -H "X-Payment: &lt;payment_header&gt;" \
+  -d '{"symbol": "BTC_USD", "depth": 10}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "symbol": "BTC_USD",
+  "bids": [
+    ["94248.00", "2.500"],
+    ["94247.00", "1.250"],
+    ...
+  ],
+  "asks": [
+    ["94253.00", "1.800"],
+    ["94254.00", "3.200"],
+    ...
+  ],
+  "timestamp": 1735570422428
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="get-trades">Get Trades</h3>
+        <p>Retrieve recent trades for a trading pair. Requires payment of $0.001 per request.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>symbol</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Trading pair (e.g., BTC_USD)</td>
+              </tr>
+              <tr>
+                <td><code>limit</code></td>
+                <td>number</td>
+                <td>No</td>
+                <td>Number of trades to return (default: 50, max: 500)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://market.cronosmcp.xyz/tools/get_trades \
+  -H "Content-Type: application/json" \
+  -H "X-Payment: &lt;payment_header&gt;" \
+  -d '{"symbol": "BTC_USD", "limit": 20}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "symbol": "BTC_USD",
+  "trades": [
+    {
+      "id": "T123456789",
+      "price": "94250.50",
+      "quantity": "0.125",
+      "side": "buy",
+      "timestamp": 1735570422000
+    },
+    ...
+  ]
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Onchain Analytics API -->
+      <section id="onchain-overview" class="doc-section">
+        <h2>Onchain Analytics API</h2>
+        <p>CronosMCP provides an Onchain Analytics API for querying blockchain data on the Cronos network, including wallet balances, token holdings, transaction history, and smart contract information.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">Base URL</div>
+            <p class="callout-text">All Onchain Analytics endpoints are available at <code>https://onchain.cronosmcp.xyz</code></p>
+          </div>
+        </div>
+
+        <h3>Endpoints Overview</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Description</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>get_balance</code></td>
+                <td>Get native CRO balance for an address</td>
+                <td><span class="price-badge free">Free</span></td>
+              </tr>
+              <tr>
+                <td><code>get_token_balance</code></td>
+                <td>Get ERC20 token balance</td>
+                <td><span class="price-badge">$0.001</span></td>
+              </tr>
+              <tr>
+                <td><code>get_transactions</code></td>
+                <td>Get recent transactions for an address</td>
+                <td><span class="price-badge">$0.002</span></td>
+              </tr>
+              <tr>
+                <td><code>get_contract_info</code></td>
+                <td>Get smart contract metadata</td>
+                <td><span class="price-badge">$0.001</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="get-balance">Get Balance</h3>
+        <p>Retrieve the native CRO balance for a wallet address. This endpoint is free to use.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>address</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Wallet address (0x...)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://onchain.cronosmcp.xyz/tools/get_balance \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150"}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "address": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150",
+  "balance": "1250.456789",
+  "symbol": "CRO",
+  "network": "cronos-mainnet"
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="get-token-balance">Get Token Balance</h3>
+        <p>Retrieve the ERC20 token balance for a wallet address. Requires payment of $0.001 per request.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>address</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Wallet address (0x...)</td>
+              </tr>
+              <tr>
+                <td><code>token</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Token contract address (0x...)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://onchain.cronosmcp.xyz/tools/get_token_balance \
+  -H "Content-Type: application/json" \
+  -H "X-Payment: &lt;payment_header&gt;" \
+  -d '{
+    "address": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150",
+    "token": "0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C"
+  }'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "address": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150",
+  "token": {
+    "address": "0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C",
+    "name": "USD Coin",
+    "symbol": "USDC.e",
+    "decimals": 6
+  },
+  "balance": "5000.000000",
+  "network": "cronos-mainnet"
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="get-transactions">Get Transactions</h3>
+        <p>Retrieve recent transactions for a wallet address. Requires payment of $0.002 per request.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>address</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Wallet address (0x...)</td>
+              </tr>
+              <tr>
+                <td><code>limit</code></td>
+                <td>number</td>
+                <td>No</td>
+                <td>Number of transactions (default: 20, max: 100)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://onchain.cronosmcp.xyz/tools/get_transactions \
+  -H "Content-Type: application/json" \
+  -H "X-Payment: &lt;payment_header&gt;" \
+  -d '{"address": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150", "limit": 10}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "address": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150",
+  "transactions": [
+    {
+      "hash": "0x082adcfd2e6110ad03f3d290c4bb63260cd48d0ae9d5e2640567312cca7f2fad",
+      "blockNumber": 65144507,
+      "from": "0xa7d5e0EA07DCd2b30Fc87719D15Df92a40791150",
+      "to": "0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C",
+      "value": "0",
+      "gasUsed": "65000",
+      "status": "success",
+      "timestamp": 1735570438000
+    },
+    ...
+  ],
+  "network": "cronos-mainnet"
+}</code></pre>
+          </div>
+        </div>
+
+        <h3 id="get-contract-info">Get Contract Info</h3>
+        <p>Retrieve metadata and information about a smart contract. Requires payment of $0.001 per request.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>address</code></td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Contract address (0x...)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>curl -X POST https://onchain.cronosmcp.xyz/tools/get_contract_info \
+  -H "Content-Type: application/json" \
+  -H "X-Payment: &lt;payment_header&gt;" \
+  -d '{"address": "0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C"}'</code></pre>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code>{
+  "address": "0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C",
+  "name": "USD Coin",
+  "symbol": "USDC.e",
+  "decimals": 6,
+  "type": "ERC20",
+  "totalSupply": "1500000000.000000",
+  "verified": true,
+  "network": "cronos-mainnet"
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="gasless-widget" class="doc-section">
+        <h2>Gasless Transfer Widget</h2>
+        <p>CronosMCP includes a gasless USDC.e transfer widget that you can embed in your website. Users can send USDC.e without paying gas fees - powered by the x402 protocol.</p>
+
+        <div class="callout callout-success">
+          <div class="callout-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <strong>Try it now!</strong> Click the "⛽ Gasless Transfer" button in the header to see the widget in action.
+          </div>
+        </div>
+
+        <h3>Features</h3>
+        <ul>
+          <li><strong>Zero Gas Fees</strong>: Users sign a message, not a transaction - no CRO needed</li>
+          <li><strong>Network Support</strong>: Works on both Cronos testnet and mainnet</li>
+          <li><strong>Wallet Integration</strong>: Connects to MetaMask and other Web3 wallets</li>
+          <li><strong>Real-time Balance</strong>: Shows user's USDC.e balance</li>
+          <li><strong>Quick Amounts</strong>: Pre-set amounts for faster transfers</li>
+        </ul>
+
+        <h3>How It Works</h3>
+        <p>The widget uses EIP-3009 (transferWithAuthorization) to enable gasless transfers:</p>
+        <ol>
+          <li>User connects their wallet</li>
+          <li>User enters recipient and amount</li>
+          <li>User signs an EIP-712 typed message (no gas!)</li>
+          <li>The x402 Facilitator executes the transfer on-chain</li>
+          <li>USDC.e is transferred to the recipient</li>
+        </ol>
+
+        <h3>Embed in Your Website</h3>
+        <p>You can embed the gasless transfer widget in your own website:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">html</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment">&lt;!-- Option 1: Link to standalone page --&gt;</span>
+<span class="token-tag">&lt;a</span> <span class="token-property">href</span>=<span class="token-string">"https://cronosmcp.com/transfer.html"</span> <span class="token-property">target</span>=<span class="token-string">"_blank"</span><span class="token-tag">&gt;</span>
+  ⛽ Gasless Transfer
+<span class="token-tag">&lt;/a&gt;</span>
+
+<span class="token-comment">&lt;!-- Option 2: Embed as iframe --&gt;</span>
+<span class="token-tag">&lt;iframe</span>
+  <span class="token-property">src</span>=<span class="token-string">"https://cronosmcp.com/transfer.html"</span>
+  <span class="token-property">width</span>=<span class="token-string">"420"</span>
+  <span class="token-property">height</span>=<span class="token-string">"600"</span>
+  <span class="token-property">frameborder</span>=<span class="token-string">"0"</span>
+<span class="token-tag">&gt;&lt;/iframe&gt;</span></code></pre>
+          </div>
+        </div>
+
+        <h3>Network Configuration</h3>
+        <p>The widget supports both networks with the following USDC.e addresses:</p>
+
+        <div class="network-cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Testnet</span></div>
+            <div class="code-content">
+              <pre style="font-size: 12px;"><code>Chain ID: 338
+USDC.e: 0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0
+RPC: https://evm-t3.cronos.org</code></pre>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Mainnet</span></div>
+            <div class="code-content">
+              <pre style="font-size: 12px;"><code>Chain ID: 25
+USDC.e: 0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C
+RPC: https://evm.cronos.org</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard" class="doc-section">
+        <h2>Payment Dashboard</h2>
+        <p>The CronosMCP Dashboard provides real-time visibility into your x402 payment activity.</p>
+
+        <h3>Features</h3>
+        <ul>
+          <li><strong>Payment History</strong>: View all payments received by your server</li>
+          <li><strong>Real-time Updates</strong>: Live transaction feed with auto-refresh</li>
+          <li><strong>Analytics</strong>: Track revenue, popular tools, and usage patterns</li>
+          <li><strong>Network Filtering</strong>: Filter by testnet or mainnet</li>
+        </ul>
+
+        <h3>Accessing the Dashboard</h3>
+        <p>The dashboard is available at <code>https://cronosmcp.com/dashboard</code> after registering your server.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment"># Run the dashboard locally</span>
+cd apps/dashboard
+npm install
+npm run dev
+
+<span class="token-comment"># Open http://localhost:3000</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="deployment" class="doc-section">
+        <h2>Deployment</h2>
+        <p>Deploy your x402-enabled server to production.</p>
+
+        <h3>Environment Variables</h3>
+        <p>Set these environment variables for your server:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment"># Required</span>
+<span class="token-property">WALLET_ADDRESS</span>=<span class="token-string">0xYourWalletAddress</span>
+
+<span class="token-comment"># Optional</span>
+<span class="token-property">NETWORK</span>=<span class="token-string">mainnet</span>  <span class="token-comment"># or testnet</span>
+<span class="token-property">PORT</span>=<span class="token-string">3000</span></code></pre>
+          </div>
+        </div>
+
+        <h3>Deploy to Vercel</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment"># Install Vercel CLI</span>
+npm i -g vercel
+
+<span class="token-comment"># Deploy</span>
+vercel --prod</code></pre>
+          </div>
+        </div>
+
+        <h3>Deploy to Railway</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment"># Install Railway CLI</span>
+npm i -g @railway/cli
+
+<span class="token-comment"># Login and deploy</span>
+railway login
+railway init
+railway up</code></pre>
+          </div>
+        </div>
+
+        <h3>Register Your Server</h3>
+        <p>After deployment, register your server to appear in the x402 Explorer:</p>
+        <ol>
+          <li>Go to <a href="register.html">cronosmcp.com/register</a></li>
+          <li>Enter your server URL, name, and wallet address</li>
+          <li>Your tools will be discoverable by AI agents</li>
+        </ol>
+      </section>
+
+      <!-- Reference -->
+      <section id="network-config" class="doc-section">
+        <h2>Network Configuration</h2>
+        <p>Complete network configuration for Cronos testnet and mainnet:</p>
+
+        <div class="tabs">
+          <div class="tab-headers">
+            <button class="tab-header active" onclick="switchTab(event, 'testnet-config')">Testnet</button>
+            <button class="tab-header" onclick="switchTab(event, 'mainnet-config')">Mainnet</button>
+          </div>
+          <div class="tab-content active" id="testnet-config">
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-lang">typescript</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-content">
+                <pre><code><span class="token-keyword">export const</span> TESTNET_CONFIG = {
+  <span class="token-property">networkId</span>: <span class="token-string">'cronos-testnet'</span>,
+  <span class="token-property">chainId</span>: <span class="token-number">338</span>,
+  <span class="token-property">chainIdHex</span>: <span class="token-string">'0x152'</span>,
+  <span class="token-property">rpcUrl</span>: <span class="token-string">'https://evm-t3.cronos.org'</span>,
+  <span class="token-property">blockExplorer</span>: <span class="token-string">'https://explorer.cronos.org/testnet'</span>,
+  <span class="token-property">facilitatorUrl</span>: <span class="token-string">'https://facilitator.cronoslabs.org'</span>,
+  <span class="token-property">usdc</span>: {
+    <span class="token-property">address</span>: <span class="token-string">'0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0'</span>,
+    <span class="token-property">name</span>: <span class="token-string">'USDC'</span>,
+    <span class="token-property">version</span>: <span class="token-string">'2'</span>,
+    <span class="token-property">decimals</span>: <span class="token-number">6</span>
+  }
+};</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="tab-content" id="mainnet-config">
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-lang">typescript</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <div class="code-content">
+                <pre><code><span class="token-keyword">export const</span> MAINNET_CONFIG = {
+  <span class="token-property">networkId</span>: <span class="token-string">'cronos-mainnet'</span>,
+  <span class="token-property">chainId</span>: <span class="token-number">25</span>,
+  <span class="token-property">chainIdHex</span>: <span class="token-string">'0x19'</span>,
+  <span class="token-property">rpcUrl</span>: <span class="token-string">'https://evm.cronos.org'</span>,
+  <span class="token-property">blockExplorer</span>: <span class="token-string">'https://explorer.cronos.org'</span>,
+  <span class="token-property">facilitatorUrl</span>: <span class="token-string">'https://facilitator.cronoslabs.org'</span>,
+  <span class="token-property">usdc</span>: {
+    <span class="token-property">address</span>: <span class="token-string">'0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C'</span>,
+    <span class="token-property">name</span>: <span class="token-string">'USD Coin'</span>,
+    <span class="token-property">version</span>: <span class="token-string">'2'</span>,
+    <span class="token-property">decimals</span>: <span class="token-number">6</span>
+  }
+};</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 id="type-definitions">Type Definitions</h2>
+        <p>Core TypeScript types used throughout the SDK:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-content">
+            <pre><code><span class="token-comment">// Network type</span>
+<span class="token-keyword">type</span> Network = <span class="token-string">'cronos-mainnet'</span> | <span class="token-string">'cronos-testnet'</span>;
+
+<span class="token-comment">// Payment requirements returned in 402 response</span>
+<span class="token-keyword">interface</span> <span class="token-class">PaymentRequirements</span> {
+  <span class="token-property">scheme</span>: <span class="token-string">'exact'</span>;
+  <span class="token-property">network</span>: <span class="token-class">Network</span>;
+  <span class="token-property">maxAmountRequired</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">resource</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">description</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">payTo</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">maxTimeoutSeconds</span>: <span class="token-keyword">number</span>;
+  <span class="token-property">asset</span>: <span class="token-keyword">string</span>;
+}
+
+<span class="token-comment">// Payment payload sent by client</span>
+<span class="token-keyword">interface</span> <span class="token-class">PaymentPayload</span> {
+  <span class="token-property">x402Version</span>: <span class="token-keyword">number</span>;
+  <span class="token-property">scheme</span>: <span class="token-string">'exact'</span>;
+  <span class="token-property">network</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">payload</span>: {
+    <span class="token-property">from</span>: <span class="token-keyword">string</span>;
+    <span class="token-property">to</span>: <span class="token-keyword">string</span>;
+    <span class="token-property">value</span>: <span class="token-keyword">string</span>;
+    <span class="token-property">validAfter</span>: <span class="token-keyword">number</span>;
+    <span class="token-property">validBefore</span>: <span class="token-keyword">number</span>;
+    <span class="token-property">nonce</span>: <span class="token-keyword">string</span>;
+    <span class="token-property">signature</span>: <span class="token-keyword">string</span>;
+    <span class="token-property">asset</span>: <span class="token-keyword">string</span>;
+  };
+}
+
+<span class="token-comment">// Tool definition</span>
+<span class="token-keyword">interface</span> <span class="token-class">MCPTool</span> {
+  <span class="token-property">name</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">description</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">price</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">inputSchema</span>?: <span class="token-class">JSONSchema</span>;
+}
+
+<span class="token-comment">// Server registration</span>
+<span class="token-keyword">interface</span> <span class="token-class">ServerRegistration</span> {
+  <span class="token-property">name</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">url</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">description</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">network</span>: <span class="token-class">Network</span>;
+  <span class="token-property">projectName</span>?: <span class="token-keyword">string</span>;
+  <span class="token-property">ownerAddress</span>: <span class="token-keyword">string</span>;
+  <span class="token-property">tools</span>: <span class="token-class">MCPTool</span>[];
+}</code></pre>
+          </div>
+        </div>
+
+        <h2 id="error-codes">Error Codes</h2>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>PAYMENT_REQUIRED</code></td>
+                <td>Payment Required</td>
+                <td>Tool requires payment. Check X-Payment header for requirements.</td>
+              </tr>
+              <tr>
+                <td><code>INVALID_SIGNATURE</code></td>
+                <td>Invalid Signature</td>
+                <td>Payment signature verification failed.</td>
+              </tr>
+              <tr>
+                <td><code>INSUFFICIENT_FUNDS</code></td>
+                <td>Insufficient Funds</td>
+                <td>Payer wallet has insufficient USDC.e balance.</td>
+              </tr>
+              <tr>
+                <td><code>BUDGET_EXCEEDED</code></td>
+                <td>Budget Exceeded</td>
+                <td>Tool price exceeds client configured budget.</td>
+              </tr>
+              <tr>
+                <td><code>SETTLEMENT_FAILED</code></td>
+                <td>Settlement Failed</td>
+                <td>On-chain payment settlement failed.</td>
+              </tr>
+              <tr>
+                <td><code>TOOL_NOT_FOUND</code></td>
+                <td>Tool Not Found</td>
+                <td>Requested tool does not exist on server.</td>
+              </tr>
+              <tr>
+                <td><code>NETWORK_MISMATCH</code></td>
+                <td>Network Mismatch</td>
+                <td>Client and server are on different networks.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Table of Contents -->
+    <aside class="toc">
+      <div class="toc-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <a href="#introduction" class="toc-link active">Introduction</a>
+      <a href="#quick-start" class="toc-link sub">Quick Start</a>
+      <a href="#installation" class="toc-link sub">Installation</a>
+      <a href="#concepts" class="toc-link sub">Core Concepts</a>
+      <a href="#server-overview" class="toc-link">Server SDK</a>
+      <a href="#creating-server" class="toc-link sub">Creating a Server</a>
+      <a href="#defining-tools" class="toc-link sub">Defining Tools</a>
+      <a href="#pricing-tools" class="toc-link sub">Pricing Tools</a>
+      <a href="#client-overview" class="toc-link">Client SDK</a>
+      <a href="#payment-flow" class="toc-link">Payment Handler</a>
+      <a href="#registry-overview" class="toc-link">Registry API</a>
+      <a href="#market-data-overview" class="toc-link">Market Data API</a>
+      <a href="#get-price" class="toc-link sub">Get Price</a>
+      <a href="#get-ohlcv" class="toc-link sub">Get OHLCV</a>
+      <a href="#get-orderbook" class="toc-link sub">Get Order Book</a>
+      <a href="#get-trades" class="toc-link sub">Get Trades</a>
+      <a href="#onchain-overview" class="toc-link">Onchain Analytics API</a>
+      <a href="#get-balance" class="toc-link sub">Get Balance</a>
+      <a href="#get-token-balance" class="toc-link sub">Get Token Balance</a>
+      <a href="#get-transactions" class="toc-link sub">Get Transactions</a>
+      <a href="#get-contract-info" class="toc-link sub">Get Contract Info</a>
+      <a href="#network-config" class="toc-link">Reference</a>
+    </aside>
+  </div>
+
+  <script>
+    // Sidebar toggle
+    function toggleSection(element) {
+      const links = element.nextElementSibling;
+      element.classList.toggle('collapsed');
+      links.classList.toggle('collapsed');
+    }
+
+    // Copy code
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-block');
+      const code = codeBlock.querySelector('code').textContent;
+      navigator.clipboard.writeText(code);
+      button.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+      setTimeout(() => {
+        button.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy';
+      }, 2000);
+    }
+
+    // Tab switching
+    function switchTab(event, tabId) {
+      const tabs = event.target.closest('.tabs');
+      tabs.querySelectorAll('.tab-header').forEach(h => h.classList.remove('active'));
+      tabs.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // Add parameter row
+    function addParam() {
+      const container = document.getElementById('params-container');
+      const row = document.createElement('div');
+      row.className = 'param-row';
+      row.innerHTML = '<input type="text" class="param-input" placeholder="Key"><input type="text" class="param-input" placeholder="Value">';
+      container.appendChild(row);
+    }
+
+    // Send playground request
+    function sendRequest() {
+      const status = document.getElementById('response-status');
+      const time = document.getElementById('response-time');
+      const output = document.getElementById('response-output');
+      
+      status.textContent = 'Loading...';
+      status.classList.remove('error');
+      
+      // Simulate API call
+      setTimeout(() => {
+        const responses = {
+          '/api/servers': {
+            servers: [
+              {
+                id: 'mkt-001',
+                name: 'market-data-server',
+                url: 'https://market.cronosmcp.xyz',
+                network: 'cronos-mainnet',
+                projectName: 'Market Data Tools',
+                tools: [
+                  { name: 'get_price', price: '0' },
+                  { name: 'get_ohlcv', price: '1000' },
+                  { name: 'get_orderbook', price: '2000' }
+                ]
+              },
+              {
+                id: 'onc-001',
+                name: 'onchain-analytics',
+                url: 'https://onchain.cronosmcp.xyz',
+                network: 'cronos-mainnet',
+                projectName: 'Blockchain Analytics',
+                tools: [
+                  { name: 'get_balance', price: '0' },
+                  { name: 'get_transactions', price: '2000' }
+                ]
+              }
+            ]
+          }
+        };
+        
+        const url = document.getElementById('playground-url').value;
+        const response = responses[url] || responses['/api/servers'];
+        
+        status.textContent = '200 OK';
+        time.textContent = Math.floor(Math.random() * 150 + 50) + 'ms';
+        output.textContent = JSON.stringify(response, null, 2);
+      }, 500);
+    }
+
+    // Active link tracking
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.toc-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + entry.target.id) {
+              link.classList.add('active');
+            }
+          });
+          document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + entry.target.id) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, { threshold: 0.5, rootMargin: '-100px 0px -50% 0px' });
+
+    document.querySelectorAll('section[id], h2[id], h3[id]').forEach(section => {
+      observer.observe(section);
+    });
+
+    // Search shortcut
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.querySelector('.search-input').focus();
+      }
+    });
+
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('open');
+    }
+  </script>
+
+  <!-- Gasless Transfer Modal -->
+  <div class="modal-overlay" id="transferModal" onclick="closeTransferModal(event)">
+    <div class="transfer-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-logo">💸</div>
+        <div>
+          <div class="modal-title">Send USDC.e</div>
+          <div class="modal-subtitle">Powered by x402 Protocol</div>
+        </div>
+        <div class="gasless-badge">⛽ GASLESS</div>
+        <button class="modal-close" onclick="closeTransferModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="network-selector">
+          <button class="network-btn active" data-network="testnet" onclick="selectNetwork('testnet')">🧪 Testnet</button>
+          <button class="network-btn" data-network="mainnet" onclick="selectNetwork('mainnet')">🌐 Mainnet</button>
+        </div>
+
+        <div id="connect-state">
+          <div class="info-box">
+            <div class="info-title">✨ How it works</div>
+            <div class="info-text">Send USDC.e to anyone without paying gas fees! The x402 protocol handles everything.</div>
+          </div>
+          <button class="connect-wallet-btn" onclick="connectWallet()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 10H2"/><circle cx="16" cy="14" r="2"/>
+            </svg>
+            Connect Wallet
+          </button>
+        </div>
+
+        <div id="transfer-state" class="hidden">
+          <div class="wallet-display">
+            <div class="wallet-avatar"></div>
+            <div class="wallet-info">
+              <div class="wallet-label">Connected</div>
+              <div class="wallet-address" id="wallet-address">0x...</div>
+            </div>
+            <div class="wallet-balance">
+              <div class="balance-label">USDC.e Balance</div>
+              <div class="balance-value" id="wallet-balance">0.00</div>
+            </div>
+            <button class="disconnect-btn" onclick="disconnectWallet()">✕</button>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Recipient Address</label>
+            <input type="text" class="input-field" id="recipient" placeholder="0x..." style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Amount</label>
+            <div class="amount-input-wrapper">
+              <input type="number" class="input-field" id="amount" placeholder="0.00" step="0.000001" min="0">
+              <span class="amount-suffix">USDC.e</span>
+            </div>
+            <div class="quick-amounts">
+              <button class="quick-amount" onclick="setAmount(0.01)">$0.01</button>
+              <button class="quick-amount" onclick="setAmount(0.10)">$0.10</button>
+              <button class="quick-amount" onclick="setAmount(1.00)">$1.00</button>
+              <button class="quick-amount" onclick="setAmount(10.00)">$10.00</button>
+            </div>
+          </div>
+
+          <button class="send-btn" id="send-btn" onclick="sendTransfer()">
+            <span id="send-btn-text">Send USDC.e</span>
+          </button>
+
+          <div id="tx-status" class="hidden"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-text">
+          Built with <a href="https://cronosmcp.com">CronosMCP</a> • <a href="#gasless-widget">View Docs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+    const TRANSFER_CONFIG = {
+      testnet: {
+        chainId: 338, chainIdHex: '0x152', networkId: 'cronos-testnet', networkName: 'Cronos Testnet',
+        rpcUrl: 'https://evm-t3.cronos.org', explorerUrl: 'https://explorer.cronos.org/testnet',
+        usdcAddress: '0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0',
+        facilitatorUrl: 'https://facilitator.cronoslabs.org/v2/x402', symbol: 'TCRO'
+      },
+      mainnet: {
+        chainId: 25, chainIdHex: '0x19', networkId: 'cronos-mainnet', networkName: 'Cronos Mainnet',
+        rpcUrl: 'https://evm.cronos.org', explorerUrl: 'https://explorer.cronos.org',
+        usdcAddress: '0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C',
+        facilitatorUrl: 'https://facilitator.cronoslabs.org/v2/x402', symbol: 'CRO'
+      }
+    };
+
+    const EIP712_DOMAIN = { name: 'Bridged USDC (Stargate)', version: '1' };
+    let currentNetwork = 'testnet', provider = null, signer = null, walletAddress = null;
+
+    function openTransferModal() {
+      document.getElementById('transferModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTransferModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('transferModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTransferModal(); });
+
+    function selectNetwork(network) {
+      currentNetwork = network;
+      document.querySelectorAll('.network-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.network === network);
+      });
+      if (walletAddress) updateBalance();
+    }
+
+    async function detectEthereumProvider(timeout = 3000) {
+      if (window.ethereum) return window.ethereum;
+      return new Promise((resolve) => {
+        const handleEthereum = () => { window.removeEventListener('ethereum#initialized', handleEthereum); resolve(window.ethereum); };
+        window.addEventListener('ethereum#initialized', handleEthereum);
+        const checkInterval = setInterval(() => {
+          if (window.ethereum) { clearInterval(checkInterval); window.removeEventListener('ethereum#initialized', handleEthereum); resolve(window.ethereum); }
+        }, 100);
+        setTimeout(() => { clearInterval(checkInterval); window.removeEventListener('ethereum#initialized', handleEthereum); resolve(window.ethereum || null); }, timeout);
+      });
+    }
+
+    async function connectWallet() {
+      const ethereum = await detectEthereumProvider();
+      if (!ethereum) { alert('Please install MetaMask or another Web3 wallet!\n\nNote: Serve this page via HTTP, not file://'); return; }
+
+      try {
+        const config = TRANSFER_CONFIG[currentNetwork];
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        
+        try {
+          await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: config.chainIdHex }] });
+        } catch (switchError) {
+          if (switchError.code === 4902) {
+            await ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{ chainId: config.chainIdHex, chainName: config.networkName, rpcUrls: [config.rpcUrl],
+                nativeCurrency: { name: 'Cronos', symbol: config.symbol, decimals: 18 }, blockExplorerUrls: [config.explorerUrl] }]
+            });
+          } else throw switchError;
+        }
+
+        provider = new ethers.providers.Web3Provider(ethereum);
+        signer = provider.getSigner();
+        walletAddress = accounts[0];
+
+        document.getElementById('wallet-address').textContent = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+        document.getElementById('connect-state').classList.add('hidden');
+        document.getElementById('transfer-state').classList.remove('hidden');
+        await updateBalance();
+      } catch (error) { console.error('Connection error:', error); alert('Failed to connect: ' + error.message); }
+    }
+
+    function disconnectWallet() {
+      provider = null; signer = null; walletAddress = null;
+      document.getElementById('connect-state').classList.remove('hidden');
+      document.getElementById('transfer-state').classList.add('hidden');
+      document.getElementById('tx-status').classList.add('hidden');
+    }
+
+    async function updateBalance() {
+      const config = TRANSFER_CONFIG[currentNetwork];
+      const usdc = new ethers.Contract(config.usdcAddress, ['function balanceOf(address) view returns (uint256)'], provider);
+      try {
+        const balance = await usdc.balanceOf(walletAddress);
+        document.getElementById('wallet-balance').textContent = parseFloat(ethers.utils.formatUnits(balance, 6)).toFixed(2);
+      } catch (error) { document.getElementById('wallet-balance').textContent = '—'; }
+    }
+
+    function setAmount(value) { document.getElementById('amount').value = value; }
+
+    async function sendTransfer() {
+      const recipient = document.getElementById('recipient').value.trim();
+      const amountStr = document.getElementById('amount').value;
+      if (!ethers.utils.isAddress(recipient)) { alert('Please enter a valid recipient address'); return; }
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) { alert('Please enter a valid amount'); return; }
+
+      const config = TRANSFER_CONFIG[currentNetwork];
+      const amountBase = Math.floor(amount * 1_000_000).toString();
+      const btn = document.getElementById('send-btn'), btnText = document.getElementById('send-btn-text');
+      btn.disabled = true; btnText.innerHTML = '<div class="spinner"></div> Signing...';
+      showTxStatus('pending', 'Preparing transaction...');
+
+      try {
+        const nonce = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2, '0')).join('');
+        const validAfter = 0, validBefore = Math.floor(Date.now() / 1000) + 300;
+
+        const domain = { name: EIP712_DOMAIN.name, version: EIP712_DOMAIN.version, chainId: config.chainId, verifyingContract: config.usdcAddress };
+        const types = { TransferWithAuthorization: [
+          { name: 'from', type: 'address' }, { name: 'to', type: 'address' }, { name: 'value', type: 'uint256' },
+          { name: 'validAfter', type: 'uint256' }, { name: 'validBefore', type: 'uint256' }, { name: 'nonce', type: 'bytes32' }
+        ]};
+        const message = { from: walletAddress, to: recipient, value: amountBase, validAfter, validBefore, nonce };
+
+        showTxStatus('pending', 'Please sign in your wallet...');
+        const signature = await signer._signTypedData(domain, types, message);
+        showTxStatus('pending', 'Submitting to x402 Facilitator...');
+        btnText.textContent = 'Processing...';
+
+        const payload = { x402Version: 1, scheme: 'exact', network: config.networkId,
+          payload: { from: walletAddress, to: recipient, value: amountBase, validAfter, validBefore, nonce, signature, asset: config.usdcAddress }
+        };
+        const paymentHeader = btoa(JSON.stringify(payload));
+        const paymentRequirements = { scheme: 'exact', network: config.networkId, maxAmountRequired: amountBase,
+          resource: 'transfer://direct', description: 'Direct USDC.e transfer', mimeType: 'application/json',
+          payTo: recipient, maxTimeoutSeconds: 300, asset: config.usdcAddress
+        };
+
+        const response = await fetch(`${config.facilitatorUrl}/settle`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'X402-Version': '1' },
+          body: JSON.stringify({ x402Version: 1, paymentHeader, paymentRequirements })
+        });
+        const result = await response.json();
+
+        if (result.event === 'payment.settled' && result.txHash) {
+          showTxStatus('success', `Transfer successful on ${result.network || config.networkId}!`, result.txHash, result.network);
+          await updateBalance();
+        } else throw new Error(result.error || 'Transfer failed');
+      } catch (error) { console.error('Transfer error:', error); showTxStatus('error', error.message || 'Transfer failed'); }
+      finally { btn.disabled = false; btnText.textContent = 'Send USDC.e'; }
+    }
+
+    function showTxStatus(type, message, txHash = null, settledNetwork = null) {
+      const statusDiv = document.getElementById('tx-status');
+      statusDiv.classList.remove('hidden', 'pending', 'success', 'error');
+      statusDiv.classList.add(type);
+      let explorerUrl = settledNetwork === 'cronos-mainnet' ? 'https://explorer.cronos.org' :
+                        settledNetwork === 'cronos-testnet' ? 'https://explorer.cronos.org/testnet' : TRANSFER_CONFIG[currentNetwork].explorerUrl;
+      const icon = type === 'pending' ? '<div class="spinner"></div>' : type === 'success' ? '✅' : '❌';
+      let html = `<div class="tx-status-header">${icon}<span>${message}</span></div>`;
+      if (txHash) html += `<div class="tx-hash">TX: <a href="${explorerUrl}/tx/${txHash}" target="_blank">${txHash.slice(0, 20)}...</a></div>`;
+      statusDiv.innerHTML = html;
+    }
+
+    window.addEventListener('load', async () => {
+      const ethereum = await detectEthereumProvider(1000);
+      if (ethereum) {
+        ethereum.on('accountsChanged', (accounts) => {
+          if (accounts.length === 0) disconnectWallet();
+          else if (walletAddress) { walletAddress = accounts[0]; document.getElementById('wallet-address').textContent = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4); updateBalance(); }
+        });
+        ethereum.on('chainChanged', () => { if (walletAddress) updateBalance(); });
+      }
+    });
+  </script>
+</body>
+</html>
