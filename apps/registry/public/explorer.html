@@ -381,9 +381,9 @@
 <body>
   <header>
     <div class="header-inner">
-      <div class="logo">
-        <img src="cronos_mcp.webp" alt="CronosMCP">
-      </div>
+      <a href="/" class="logo">
+        <img src="/cronos_mcp.webp" alt="CronosMCP">
+      </a>
       <nav>
         <a href="/">Home</a>
         <a href="/explorer" class="active">Explorer</a>
@@ -452,7 +452,7 @@
   </main>
 
   <script>
-    const REGISTRY_URL = 'http://localhost:3010';
+    const REGISTRY_URL = '';
     let searchTimeout = null;
 
     async function loadStats() {

@@ -592,7 +592,7 @@ const server = http.createServer(async (req, res) => {
       }
       
       // Register page (HTML form)
-      if (pathname === '/register-server') {
+      if (pathname === '/register') {
         return serveHTMLPage(res, 'register.html');
       }
       
@@ -645,7 +645,7 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // API register endpoint (different from /register-server HTML page)
+    // API register endpoint (different from /register HTML page)
     if (method === 'POST' && pathname === '/register') {
       return await handleRegister(req, res);
     }
@@ -669,7 +669,7 @@ server.listen(PORT, HOST, () => {
   console.log('    /                 - Homepage');
   console.log('    /explorer         - Browse x402 tools');
   console.log('    /docs             - Documentation');
-  console.log('    /register-server  - Register your server');
+  console.log('    /register  - Register your server');
   console.log('    /transfer         - Gasless USDC.e transfer');
   console.log('');
   console.log('  API Endpoints:');
