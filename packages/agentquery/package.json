@@ -1,0 +1,20 @@
+{
+  "name": "@cronos-mcp/agentquery",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@cronos-mcp/client-sdk": "workspace:*",
+    "@cronos-mcp/core": "workspace:*",
+    "@crypto.com/ai-agent-client": "^1.0.0",
+    "ethers": "^6.9.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

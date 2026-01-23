@@ -42,6 +42,7 @@
     "url": "https://github.com/your-org/cronos-mcp"
   },
   "dependencies": {
+    "@crypto.com/ai-agent-client": "^1.0.2",
     "ethers": "^6.16.0"
   }
 }
