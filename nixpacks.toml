@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_18"]
+
+[phases.install]
+cmds = ["npm i -g pnpm", "pnpm install"]
+
+[phases.build]
+cmds = ["pnpm run build --filter=@cronos-mcp/registry"]
+
+[start]
+cmd = "pnpm run start --filter=@cronos-mcp/registry"
